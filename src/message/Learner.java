@@ -8,5 +8,7 @@
 package message;
 
 public class Learner {
+	
+	private int acceptedValue;
 
 }

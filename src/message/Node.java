@@ -14,7 +14,13 @@ public class Node {
     
 	private String nodeName;  // may be used later
     private String ipAddress;
-    private int portNum;    
+    private int portNum;
+    
+    // Added for Paxos Implementation
+    // Each node acts as proposer, acceptor and learner;
+    private Proposer proposer;
+    private Acceptor acceptor;
+    private Learner learner;
     
     // Node constructor takes name i.e. "John", "Paul", "Geroge", "Ringo", "Walrus"
     // IP Address and Port Number for communication
