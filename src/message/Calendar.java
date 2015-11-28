@@ -1,3 +1,9 @@
+/* Distributed Systems Project #2 
+ * Jeramey Tyler
+ * John Sheehan
+ * 
+ * Message Class - Models a Paxos Message
+ */
 
 package message;
 
@@ -62,6 +68,7 @@ public class Calendar
         }
         node = new Node(this.userName, this.ip, Calendar.portNumber);
         
+        //Listen in the background for messages
         Runnable backGroundRunnable = new Runnable(){
         	public void run(){
         		try{

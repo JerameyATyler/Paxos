@@ -1,3 +1,10 @@
+/* Distributed Systems Project #2 
+ * Jeramey Tyler
+ * John Sheehan
+ * 
+ * Appointment Class - Models a calendar appointment
+ */
+
 package message;
 
 import java.io.Serializable;

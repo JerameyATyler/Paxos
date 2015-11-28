@@ -1,3 +1,10 @@
+/* Distributed Systems Project #2 
+ * Jeramey Tyler
+ * John Sheehan
+ * 
+ * Appointment Class - Models an Event Record
+ */
+
 package message;
 
 import java.io.Serializable;

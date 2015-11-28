@@ -1,4 +1,4 @@
-/* Distributed Systems Project #1 
+/* Distributed Systems Project #2 
  * Jeramey Tyler
  * John Sheehan
  * 
@@ -7,11 +7,8 @@
 
 package message;
 
-import java.net.Socket;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
+import java.io.*;
+import java.net.*;
 
 public class Node {
     
@@ -19,7 +16,7 @@ public class Node {
     private String ipAddress;
     private int portNum;    
     
-    // Node constructor takes name i.e. "John", "Paul", "Geroge", "Ringo"
+    // Node constructor takes name i.e. "John", "Paul", "Geroge", "Ringo", "Walrus"
     // IP Address and Port Number for communication
     public Node(String name, String ip, int port){
     	nodeName = name;
@@ -36,9 +33,22 @@ public class Node {
              out.flush();
              socket.close();
     }
+ 	
+ 	// sends a message via UDP
+ 	public void sendMessageUDP(Node node, Message message) throws IOException{
+         
+ 		DatagramSocket serverSocket = new DatagramSocket(9876);
+        byte[] sendData = new byte[1024];
+      
+        sendData = message.msg.getBytes();
+        DatagramPacket sendPacket =
+        new DatagramPacket(sendData, sendData.length, InetAddress.getByName(node.getIpAddress()), node.getPortNum());
+        serverSocket.send(sendPacket);
+        serverSocket.close();
+    }
          
  	// wait in an infinite loop to receive messages
-	void listenForMessages(Calendar cal) throws IOException{
+	void listenForUDPMessages(Calendar cal) throws IOException{
     	 
 		// Start listening
 		ServerSocket listener = new ServerSocket(portNum);
@@ -52,7 +62,23 @@ public class Node {
                 //new MessageReceiver(listener.accept(),getPortNum()).start();
             
           		try {
+          			DatagramSocket serverSocket = new DatagramSocket(9876);
+                    byte[] receiveData = new byte[1024];
+                    //byte[] sendData = new byte[1024];
           			
+          			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                    serverSocket.receive(receivePacket);
+                    String sentence = new String( receivePacket.getData());
+                    System.out.println("RECEIVED: " + sentence);
+                    InetAddress IPAddress = receivePacket.getAddress();
+                    int port = receivePacket.getPort();
+                    
+                    //String capitalizedSentence = sentence.toUpperCase();
+                    //sendData = capitalizedSentence.getBytes();
+                    //DatagramPacket sendPacket =
+                    //new DatagramPacket(sendData, sendData.length, IPAddress, port);
+                    //serverSocket.send(sendPacket);
+          						
           			Socket clientSocket = listener.accept();
           		    ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
           		    Message messageReceived;
@@ -79,6 +105,49 @@ public class Node {
             listener.close();
         } 
 	}
+	
+	// wait in an infinite loop to receive messages
+	void listenForMessages(Calendar cal) throws IOException{
+	    	 
+	// Start listening
+	ServerSocket listener = new ServerSocket(portNum);
+	    	 
+			// Debug purposes
+			//System.out.printf("%s is listening...",nodeName);
+			
+			// Run in an infinite loop.  Call a handler each time a message is received
+			try {
+	            while (true) {
+	                //new MessageReceiver(listener.accept(),getPortNum()).start();
+	            
+	          		try {
+	          			
+	          			Socket clientSocket = listener.accept();
+	          		    ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
+	          		    Message messageReceived;
+	          			try {
+	          				messageReceived = (Message) in.readObject();
+	          					
+	          				// Used for Debugging Purposes
+	          				//System.out.printf("Message was %s",messageReceived.msg);
+	          				
+	          			    // PUT MESSAGE HANDLING CODE HERE
+	          				// use messageReceived
+	          				cal.receive(messageReceived);
+	          			
+	          			} catch (ClassNotFoundException e) {
+	          					e.printStackTrace();
+	          				}
+	          			clientSocket.close();
+	          			} catch (IOException e) {
+	          			e.printStackTrace();
+	          		}
+	            	          	
+	            }
+	        } finally {
+	            listener.close();
+	        } 
+		}
 	
 	public String getIpAddress() {
 		return ipAddress;
