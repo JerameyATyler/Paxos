@@ -7,6 +7,8 @@
 
 package message;
 
+//import java.io.IOException;
+
 public class Acceptor {
 	
 	private int maxPrepare = 0; //largest proposal number for which it has responded to a prepare message (initially 0)
@@ -47,4 +49,9 @@ public class Acceptor {
 	public void sendAck(){
 		
 	}
+
+	public void listenForMessages(){
+	
+	}
+    
 }

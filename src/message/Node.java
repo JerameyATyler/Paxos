@@ -2,7 +2,7 @@
  * Jeramey Tyler
  * John Sheehan
  * 
- * Node Class - Implements a node which can send and listen for messages from other nodes
+ * Node Class - Implements a node which can send and listen for messages from other nodes via TCP and UDP
  */
 
 package message;
@@ -14,7 +14,8 @@ public class Node {
     
 	private String nodeName;  // may be used later
     private String ipAddress;
-    private int portNum;
+    private int tcpPortNum;
+    private int udpPortNum;
     
     // Added for Paxos Implementation
     // Each node acts as proposer, acceptor and learner;
@@ -24,16 +25,17 @@ public class Node {
     
     // Node constructor takes name i.e. "John", "Paul", "Geroge", "Ringo", "Walrus"
     // IP Address and Port Number for communication
-    public Node(String name, String ip, int port){
+    public Node(String name, String ip, int tcpport, int udpport){
     	nodeName = name;
     	ipAddress = ip;
-    	portNum = port;
+    	tcpPortNum = tcpport;
+    	udpPortNum = udpport;
     }
 
-    // sends the message Message to the specified node Node
- 	public void sendMessage(Node node, Message message) throws IOException{
+    // sends the message Message over TCP to the specified node Node
+ 	public void sendTCPMessage(Node node, Message message) throws IOException{
  	         
-             Socket socket = new Socket(node.getIpAddress(),node.getPortNum());    
+             Socket socket = new Socket(node.getIpAddress(),tcpPortNum);    
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              out.writeObject(message);
              out.flush();
@@ -41,82 +43,47 @@ public class Node {
     }
  	
  	// sends a message via UDP
- 	public void sendMessageUDP(Node node, Message message) throws IOException{
+ 	public void sendUDPMessage(Node node, Message message) throws IOException{
          
- 		DatagramSocket serverSocket = new DatagramSocket(9876);
-        byte[] sendData = new byte[1024];
+ 		DatagramSocket serverSocket = new DatagramSocket(udpPortNum);
+        byte[] sendData = new byte[Constant.UDP_MAX_PACKET_SIZE];
       
         sendData = message.msg.getBytes();
         DatagramPacket sendPacket =
-        new DatagramPacket(sendData, sendData.length, InetAddress.getByName(node.getIpAddress()), node.getPortNum());
+        new DatagramPacket(sendData, sendData.length, InetAddress.getByName(node.getIpAddress()), udpPortNum);
         serverSocket.send(sendPacket);
         serverSocket.close();
     }
          
- 	// wait in an infinite loop to receive messages
+ 	// wait in an infinite loop to receive messages over UDP
 	void listenForUDPMessages(Calendar cal) throws IOException{
-    	 
-		// Start listening
-		ServerSocket listener = new ServerSocket(portNum);
-    	 
-		// Debug purposes
-		//System.out.printf("%s is listening...",nodeName);
+    
+		DatagramSocket serverSocket = new DatagramSocket(udpPortNum);
+        byte[] receiveData = new byte[Constant.UDP_MAX_PACKET_SIZE];
 		
 		// Run in an infinite loop.  Call a handler each time a message is received
 		try {
-            while (true) {
-                //new MessageReceiver(listener.accept(),getPortNum()).start();
-            
-          		try {
-          			DatagramSocket serverSocket = new DatagramSocket(9876);
-                    byte[] receiveData = new byte[1024];
-                    //byte[] sendData = new byte[1024];
-          			
-          			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                    serverSocket.receive(receivePacket);
-                    String sentence = new String( receivePacket.getData());
-                    System.out.println("RECEIVED: " + sentence);
-                    InetAddress IPAddress = receivePacket.getAddress();
-                    int port = receivePacket.getPort();
-                    
-                    //String capitalizedSentence = sentence.toUpperCase();
-                    //sendData = capitalizedSentence.getBytes();
-                    //DatagramPacket sendPacket =
-                    //new DatagramPacket(sendData, sendData.length, IPAddress, port);
-                    //serverSocket.send(sendPacket);
-          						
-          			Socket clientSocket = listener.accept();
-          		    ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-          		    Message messageReceived;
-          			try {
-          				messageReceived = (Message) in.readObject();
-          					
-          				// Used for Debugging Purposes
-          				//System.out.printf("Message was %s",messageReceived.msg);
-          				
-          			    // PUT MESSAGE HANDLING CODE HERE
-          				// use messageReceived
-          				cal.receive(messageReceived);
-          			
-          			} catch (ClassNotFoundException e) {
-          					e.printStackTrace();
-          				}
-          			clientSocket.close();
-          			} catch (IOException e) {
-          			e.printStackTrace();
-          		}
-            	          	
-            }
-        } finally {
-            listener.close();
-        } 
+   
+            while(true)
+               {
+                  DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                  serverSocket.receive(receivePacket);
+                  String sentence = new String( receivePacket.getData());
+                  System.out.println("RECEIVED: " + sentence);
+               }	          
+             } 
+		
+		finally {
+            serverSocket.close();
+        }
+		
 	}
 	
-	// wait in an infinite loop to receive messages
-	void listenForMessages(Calendar cal) throws IOException{
+	// wait in an infinite loop to receive messages over TCP
+	void listenForTCPMessages(Calendar cal) throws IOException{
 	    	 
 	// Start listening
-	ServerSocket listener = new ServerSocket(portNum);
+	ServerSocket listener = new ServerSocket(tcpPortNum);
 	    	 
 			// Debug purposes
 			//System.out.printf("%s is listening...",nodeName);
@@ -161,14 +128,6 @@ public class Node {
 
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
-	}
-
-	public int getPortNum() {
-		return portNum;
-	}
-
-	public void setPortNum(int portNum) {
-		this.portNum = portNum;
 	}
 
 }

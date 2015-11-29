@@ -2,7 +2,7 @@
  * Jeramey Tyler
  * John Sheehan
  * 
- * Message Class - Models a Paxos Message
+ * Calendar Class - Models the Calendar on a particular node
  */
 
 package message;
@@ -19,11 +19,17 @@ import java.util.Scanner;
 
 public class Calendar
 {
-
+    //Uncomment ONLY one Node object corresponding to this AWS instance
+    Node node = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+    //Node node = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+    //Node node = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+    //Node node = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+    //Node node = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+	
     //Appointments for all users that are known by this user. 
     //The user's appointments correspond to appointments[userNumber]
     ArrayList<Appointment>[] appointments
-            = (ArrayList<Appointment>[]) new ArrayList[4];
+            = (ArrayList<Appointment>[]) new ArrayList[Constant.NUMBER_OF_NODES];
 
     //The index of appointments that corresponds to this user
     private final int userNumber = 0;
@@ -33,22 +39,12 @@ public class Calendar
 
     //The dictionary of what this user knows about the knowledge of the 
     //other users
-    int[][] dictionary = new int[4][4];
+    int[][] dictionary = new int[Constant.NUMBER_OF_NODES][Constant.NUMBER_OF_NODES];
 
     //The list of event records that is used to maintain the log
     ArrayList<EventRecord> log = new ArrayList();
 
-    //The Node object that handles message sending/receiving
-    Node node;
-
-    //"Name" of user,
-    String userName = "John";
-
-    //IP of user
-    String ip = "54.191.5.185";
-    //Port number for all nodes
-    static final int portNumber = 9096;
-
+    
     public static void main(String[] args)
     {
         Calendar cal = new Calendar();
@@ -66,13 +62,12 @@ public class Calendar
         {
             this.appointments[i] = new ArrayList();
         }
-        node = new Node(this.userName, this.ip, Calendar.portNumber);
         
-        //Listen in the background for messages
+        //Listen in the background for TCP messages
         Runnable backGroundRunnable = new Runnable(){
         	public void run(){
         		try{
-        			node.listenForMessages(Calendar.this);
+        			node.listenForTCPMessages(Calendar.this);
         		}catch(IOException e){
         			e.printStackTrace();
         		}
@@ -81,8 +76,22 @@ public class Calendar
         Thread messageListener = new Thread(backGroundRunnable);
         messageListener.start();
 
-
+        //Listen in the background for UDP messages
+        Runnable backGroundUDPRunnable = new Runnable(){
+        	public void run(){
+        		try{
+        			node.listenForUDPMessages(Calendar.this);
+        		}catch(IOException e){
+        			e.printStackTrace();
+        		}
+        	}
+        };
+        Thread messageUDPListener = new Thread(backGroundUDPRunnable);
+        messageUDPListener.start();
+        
         boolean cont = true;
+        
+        // Display Calendar User Interface
         while (cont)
         {
             String in = "";
@@ -105,6 +114,18 @@ public class Calendar
             cont = true;
 
             int input = Integer.parseInt(in);
+            
+            Message test = new Message();
+            test.msg = "HELLO THERE IT WORKS!";
+            
+            try
+            {
+                this.node.sendUDPMessage(node, test);
+            }
+            catch (Exception ex)
+            {
+            	ex.printStackTrace();
+            }
 
             //Invoke appropriate functions from user input
             switch (input)
@@ -701,11 +722,7 @@ public class Calendar
     //Send message to appropriate users
     private void send(Message m)
     {
-        /*
-         Node Paul = new Node("Paul","52.89.220.0",portNumber);
-         Node George = new Node("George","52.89.113.240",portNumber);
-         Node Ringo = new Node("Ringo","54.186.26.182",portNumber);
-         */
+
         m.dictionary = this.dictionary;
         for (int i = 0; i < m.apt.attendees.length; i++)
         {
@@ -714,13 +731,19 @@ public class Calendar
                 m.log = this.fetchEventRecords(i);
                 switch (i)
                 {
+                
+                //Node node = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+                //Node node = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+                //Node node = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+                //Node node = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+                //Node node = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+                
                     case 0:
                     {
-                        Node receiver = new Node("John", "54.191.5.185",
-                                                 portNumber);
+                        Node receiver = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
                         try
                         {
-                            this.node.sendMessage(receiver, m);
+                            this.node.sendTCPMessage(receiver, m);
                         }
                         catch (Exception ex)
                         {
@@ -730,11 +753,10 @@ public class Calendar
                     }
                     case 1:
                     {
-                        Node receiver = new Node("Paul", "52.89.220.0",
-                                                 portNumber);
+                        Node receiver = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
                         try
                         {
-                            this.node.sendMessage(receiver, m);
+                            this.node.sendTCPMessage(receiver, m);
                         }
                         catch (Exception ex)
                         {
@@ -744,11 +766,10 @@ public class Calendar
                     }
                     case 2:
                     {
-                        Node receiver = new Node("George", "52.89.113.240",
-                                                 portNumber);
+                        Node receiver = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
                         try
                         {
-                            this.node.sendMessage(receiver, m);
+                            this.node.sendTCPMessage(receiver, m);
                         }
                         catch (Exception ex)
                         {
@@ -758,11 +779,23 @@ public class Calendar
                     }
                     case 3:
                     {
-                        Node receiver = new Node("Ringo", "54.186.26.182",
-                                                 portNumber);
+                        Node receiver = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
                         try
                         {
-                            this.node.sendMessage(receiver, m);
+                            this.node.sendTCPMessage(receiver, m);
+                        }
+                        catch (Exception ex)
+                        {
+                        	ex.printStackTrace();
+                        }
+                        break;
+                    }
+                    case 4:
+                    {
+                        Node receiver = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+                        try
+                        {
+                            this.node.sendTCPMessage(receiver, m);
                         }
                         catch (Exception ex)
                         {
@@ -1100,6 +1133,12 @@ public class Calendar
     private void send(Message m, boolean[] usersToNotify)
     {
 
+        //Node node = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+        //Node node = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+        //Node node = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+        //Node node = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+        //Node node = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+    	
         for (int i = 0; i < usersToNotify.length; i++)
         {
             if (m.apt.attendees[i] && i != this.userNumber)
@@ -1109,11 +1148,10 @@ public class Calendar
                 {
                     case 0:
                     {
-                        Node receiver = new Node("John", "54.191.5.185",
-                                                 portNumber);
+                        Node receiver = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
                         try
                         {
-                            this.node.sendMessage(receiver, m);
+                            this.node.sendTCPMessage(receiver, m);
                         }
                         catch (Exception ex)
                         {
@@ -1123,11 +1161,10 @@ public class Calendar
                     }
                     case 1:
                     {
-                        Node receiver = new Node("Paul", "52.89.220.0",
-                                                 portNumber);
+                        Node receiver = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
                         try
                         {
-                            this.node.sendMessage(receiver, m);
+                            this.node.sendTCPMessage(receiver, m);
                         }
                         catch (Exception ex)
                         {
@@ -1137,11 +1174,10 @@ public class Calendar
                     }
                     case 2:
                     {
-                        Node receiver = new Node("George", "52.89.113.240",
-                                                 portNumber);
+                        Node receiver = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);;
                         try
                         {
-                            this.node.sendMessage(receiver, m);
+                            this.node.sendTCPMessage(receiver, m);
                         }
                         catch (Exception ex)
                         {
@@ -1151,11 +1187,23 @@ public class Calendar
                     }
                     case 3:
                     {
-                        Node receiver = new Node("Ringo", "54.186.26.182",
-                                                 portNumber);
+                        Node receiver = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);;
                         try
                         {
-                            this.node.sendMessage(receiver, m);
+                            this.node.sendTCPMessage(receiver, m);
+                        }
+                        catch (Exception ex)
+                        {
+                        	ex.printStackTrace();
+                        }
+                        break;
+                    }
+                    case 4:
+                    {
+                        Node receiver = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+                        try
+                        {
+                            this.node.sendTCPMessage(receiver, m);
                         }
                         catch (Exception ex)
                         {
