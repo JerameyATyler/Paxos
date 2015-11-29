@@ -5,7 +5,7 @@
  * Stores all constants used throughout the implementation
  */
 
-package message;
+package paxos;
 
 interface Constant {
 	

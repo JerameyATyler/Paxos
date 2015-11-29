@@ -5,7 +5,7 @@
  * Learner Class - Models a Paxos Learner
  */
 
-package message;
+package paxos;
 
 public class Learner {
 	

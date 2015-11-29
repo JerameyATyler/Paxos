@@ -5,7 +5,7 @@
  * Proposer Class - Models a Paxos Proposer
  */
 
-package message;
+package paxos;
 
 public class Proposer {
 	

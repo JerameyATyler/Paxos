@@ -5,7 +5,7 @@
  * Acceptor Class - Models a Paxos Acceptor
  */
 
-package message;
+package paxos;
 
 //import java.io.IOException;
 
