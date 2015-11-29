@@ -33,6 +33,14 @@ public class Proposer {
 	void sendCommit(){
 		
 	}
+	
+	void promiseReceived(Message messageReceived){
+		
+	}
+	
+	void ackReceived(Message messageReceived){
+		
+	}
 }
 
 

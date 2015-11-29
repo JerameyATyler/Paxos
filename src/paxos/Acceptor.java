@@ -50,8 +50,17 @@ public class Acceptor {
 		
 	}
 
-	public void listenForMessages(){
+	public void prepareReceived(Message messageReceived){
 	
 	}
-    
+	
+	public void acceptReceived(Message messageReceived){
+		
+	}
+	
+    public void commitReceived(Message messageReceived){
+		
+	}
+	
+	
 }

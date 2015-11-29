@@ -125,6 +125,7 @@ public class Calendar
             // For testing purposes
             Message test = new Message();
             test.msg = "HELLO THERE PAUL!";
+            test.messageType = Constant.messageType.Prepare;
             
             try
             {

@@ -20,4 +20,5 @@ public class Message implements Serializable {
 	String msg;
 	Appointment apt;
 	int eventType;
+	Constant.messageType messageType;
 }

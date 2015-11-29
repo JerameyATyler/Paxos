@@ -45,36 +45,126 @@ public class Node {
  	// sends a message via UDP
  	public void sendUDPMessage(Node node, Message message) throws IOException{
          
- 		DatagramSocket clientSocket = new DatagramSocket();
- 		byte[] sendData = new byte[Constant.UDP_MAX_PACKET_SIZE];
-      
-        sendData = message.msg.getBytes();
-        DatagramPacket sendPacket =
-        new DatagramPacket(sendData, sendData.length, InetAddress.getByName(node.getIpAddress()), udpPortNum);
-        clientSocket.send(sendPacket);
-        clientSocket.close();
+ 	    try {
+ 	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+ 	      
+ 	        ObjectOutputStream oos = new ObjectOutputStream(baos);
+ 	      
+ 	        oos.writeObject(message);
+ 	        oos.flush();
+ 	     
+ 	        // serialize the message for transmission
+ 	        byte[] Buf= baos.toByteArray();
+
+ 	        int number = Buf.length;;
+ 	        byte[] data = new byte[4];
+
+ 	        for (int i = 0; i < 4; ++i) {
+ 	           int shift = i << 3; // i * 8
+ 	           data[3-i] = (byte)((number & (0xff << shift)) >>> shift);
+ 	        }
+
+ 	      // Open a socket to send message
+ 	      DatagramSocket socket = new DatagramSocket();
+ 	      InetAddress client = InetAddress.getByName(node.getIpAddress());
+ 	      
+ 	      // Send the size of the packet first
+ 	      DatagramPacket packet = new DatagramPacket(data, 4, client, udpPortNum);
+ 	      socket.send(packet);
+
+ 	      // Send the contents of the message next
+ 	      packet = new DatagramPacket(Buf, Buf.length, client, udpPortNum);
+ 	      socket.send(packet);
+ 	      
+ 	      socket.close();
+ 	      
+ 	      System.out.println("DONE SENDING");
+ 	      
+ 	    } catch(Exception e) {
+ 	        e.printStackTrace();
+ 	    }
     }
          
  	// wait in an infinite loop to receive messages over UDP
 	void listenForUDPMessages(Calendar cal) throws IOException{
     
-		DatagramSocket serverSocket = new DatagramSocket(udpPortNum);
-        byte[] receiveData = new byte[Constant.UDP_MAX_PACKET_SIZE];
-		
+		DatagramSocket socket = new DatagramSocket(udpPortNum);
+ 
 		// Run in an infinite loop.  Call a handler each time a message is received
 		try {
    
             while(true)
                {
-                  DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                  serverSocket.receive(receivePacket);
-                  String sentence = new String( receivePacket.getData());
-                  System.out.println("RECEIVED: " + sentence);
+                  
+            	try {
+            	      // read in the length of the message
+            		  byte[] data = new byte[4];
+            	      DatagramPacket packet = new DatagramPacket(data, data.length);
+            	      socket.receive(packet);
+            	      int length = 0;
+            	      for (int i = 0; i < 4; ++i) {
+            	          length |= (data[3-i] & 0xff) << (i << 3);
+            	      }
+
+            	      // Read in the message
+            	      byte[] buffer = new byte[length];
+            	      packet = new DatagramPacket(buffer, buffer.length );
+            	      socket.receive(packet);
+            	      ByteArrayInputStream baos = new ByteArrayInputStream(buffer);
+            	      ObjectInputStream oos = new ObjectInputStream(baos);
+            	      Message messageReceived = (Message)oos.readObject();
+            	      
+            	      // Put paxos message handlers here
+            	      switch (messageReceived.messageType){ 
+            	      
+            	         case Prepare:
+            	            {
+            	    	    System.out.println("Prepare");
+            	    	    acceptor.prepareReceived(messageReceived);
+            	    	    break;
+            	            }
+            	      
+            	         case Promise:
+        	                {
+        	    	        System.out.println("Promise");
+        	    	        proposer.promiseReceived(messageReceived);
+        	    	        break;
+        	                }
+        	                
+            	         case Accept:
+            	         	{
+            	        	System.out.println("Accept");
+            	        	acceptor.acceptReceived(messageReceived);
+            	        	break;
+            	         	}
+            	      
+            	         case Ack:
+            	         	{
+            	        	System.out.println("Ack");
+            	        	proposer.ackReceived(messageReceived);
+            	        	break;
+            	         	}
+            	      
+            	         case Commit:
+            	         	{
+            	        	System.out.println("Commit");
+            	        	acceptor.acceptReceived(messageReceived);
+            	        	break;
+            	         	}
+            	          
+            	      } // end switch paxos message handler
+            	      
+            	      // Used for debug purposes
+            	      System.out.printf("Received from: %s",messageReceived.msg);
+            	      
+            	    } catch(Exception e) {
+            	        e.printStackTrace();
+            	    }
                }	          
              } 
 		
 		finally {
-            serverSocket.close();
+            socket.close();
         }
 		
 	}
