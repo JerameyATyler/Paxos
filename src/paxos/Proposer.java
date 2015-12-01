@@ -26,7 +26,7 @@ public class Proposer {
         Message prepareMessage = new Message();
         prepareMessage.msg = "HELLO BEATLES!";
         prepareMessage.messageType = Constant.messageType.Prepare;
-        prepareMessage.sender = node;
+        prepareMessage.sender = node.getNodeName();
         prepareMessage.m = nextProposalNumber;
 		
 	    try
@@ -64,7 +64,7 @@ public class Proposer {
 	}
 	
 	void promiseReceived(Message messageReceived, ArrayList<Node> nodeList){
-		System.out.printf("Promise Message Received from %s: %s\n",messageReceived.sender.getNodeName(),messageReceived.msg);
+		System.out.printf("Promise Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
 	    
 		// TODO: if message received by majority
 		if (true == true)
@@ -76,7 +76,7 @@ public class Proposer {
 	        Message acceptMessage = new Message();
 	        acceptMessage.msg = "PROMISE RECEIVED!";
 	        acceptMessage.messageType = Constant.messageType.Accept;
-	        acceptMessage.sender = node;
+	        acceptMessage.sender = node.getNodeName();
 	        acceptMessage.accNum = accNum;
 	        acceptMessage.accVal = accVal;
 			
@@ -100,7 +100,7 @@ public class Proposer {
 	}
 	
 	void ackReceived(Message messageReceived, ArrayList<Node> nodeList){
-		System.out.printf("Ack Message Received from %s: %s\n",messageReceived.sender.getNodeName(),messageReceived.msg);
+		System.out.printf("Ack Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
 	}
 }
 

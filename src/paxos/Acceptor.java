@@ -57,7 +57,7 @@ public class Acceptor {
 	}
 
 	public void prepareReceived(Message messageReceived, ArrayList<Node> nodeList){
-	    System.out.printf("Prepare Message Received from: %s\n",messageReceived.sender.getNodeName(), messageReceived.msg);
+	    System.out.printf("Prepare Message Received from: %s\n",messageReceived.sender, messageReceived.msg);
 	    if (messageReceived.m > maxPrepare)
 	        {
 	    	maxPrepare = messageReceived.m;
@@ -66,7 +66,7 @@ public class Acceptor {
 	        Message promiseMessage = new Message();
 	        promiseMessage.msg = "HELLO FROM ACCEPTOR!";
 	        promiseMessage.messageType = Constant.messageType.Promise;
-	        promiseMessage.sender = node;
+	        promiseMessage.sender = node.getNodeName();
 	        promiseMessage.accNum = accNum;
 	        promiseMessage.accVal = accVal;
 			
@@ -89,11 +89,11 @@ public class Acceptor {
 	}
 	
 	public void acceptReceived(Message messageReceived, ArrayList<Node> nodeList){
-		 System.out.printf("Accept Message Received from %s: %s\n",messageReceived.sender.getNodeName(),messageReceived.msg);
+		 System.out.printf("Accept Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
 	}
 	
     public void commitReceived(Message messageReceived, ArrayList<Node> nodeList){
-    	 System.out.printf("Commit Message Received from %s: %s\n",messageReceived.sender.getNodeName(),messageReceived.msg);
+    	 System.out.printf("Commit Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
 	}
 	
 }

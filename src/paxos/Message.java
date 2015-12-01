@@ -21,7 +21,7 @@ public class Message implements Serializable {
 	Appointment apt;
 	int eventType;
 	Constant.messageType messageType;
-	Node sender;
+	String sender;
 	int m; 			// paxos message values
 	int accVal;    
 	int accNum;
