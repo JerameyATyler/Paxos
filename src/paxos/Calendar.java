@@ -20,18 +20,24 @@ import java.util.Scanner;
 public class Calendar
 {
     // Only uncomment ONE of these entries based on this AWS instance
-    Node node = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
-    //Node node = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
-    //Node node = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
-    //Node node = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
-    //Node node = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+    Node node = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, true);
+    //Node node = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false);
+    //Node node = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false);
+    //Node node = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false);
+    //Node node = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false);
 	
-    //Create all node instances
-    Node John = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
-    Node Paul = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
-    Node George = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
-    Node Ringo = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
-    Node Walrus = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER);
+    //Create all node instances - Initially John is leader
+    Node John = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, true);
+    Node Paul = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false);
+    Node George = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false);
+    Node Ringo = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false);
+    Node Walrus = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false);
+    
+    //Add a list of the nodes so each node knows how to communicate with the rest
+    ArrayList<Node> nodeList=new ArrayList<Node>();
+ 
+    ArrayList<Node>[] nodes
+    = (ArrayList<Node>[]) new ArrayList[Constant.NUMBER_OF_NODES];
     
     //Appointments for all users that are known by this user. 
     //The user's appointments correspond to appointments[userNumber]
@@ -64,12 +70,27 @@ public class Calendar
      */
     public void runCalendar()
     {
+    	
         //Initialize the appointments lists
         for (int i = 0; i < this.appointments.length; i++)
         {
             this.appointments[i] = new ArrayList();
         }
         
+        //Initialize the node list
+        nodeList.add(John);
+        nodeList.add(Paul);
+        nodeList.add(George);
+        nodeList.add(Ringo);
+        nodeList.add(Walrus);
+        
+        //Each node stores a list of all other nodes
+        John.setNodeList(nodeList);
+        Paul.setNodeList(nodeList);
+        George.setNodeList(nodeList);
+        Ringo.setNodeList(nodeList);
+        Walrus.setNodeList(nodeList);
+                
         //Listen in the background for TCP messages
         Runnable backGroundRunnable = new Runnable(){
         	public void run(){
@@ -121,21 +142,10 @@ public class Calendar
             cont = true;
 
             int input = Integer.parseInt(in);
-            
-            // For testing purposes
-            Message test = new Message();
-            test.msg = "HELLO THERE PAUL!";
-            test.messageType = Constant.messageType.Prepare;
-            
-            try
-            {
-                this.node.sendUDPMessage(Paul, test);
-            }
-            catch (Exception ex)
-            {
-            	ex.printStackTrace();
-            }
 
+            // Paxos Test
+            node.proposer.sendPrepare(nodeList);
+            
             //Invoke appropriate functions from user input
             switch (input)
             {

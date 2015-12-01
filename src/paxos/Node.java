@@ -9,6 +9,7 @@ package paxos;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Node {
     
@@ -16,22 +17,34 @@ public class Node {
     private String ipAddress;
     private int tcpPortNum;
     private int udpPortNum;
+    private ArrayList<Node> nodeList=new ArrayList<Node>();
     
     // Added for Paxos Implementation
     // Each node acts as proposer, acceptor and learner;
-    private Proposer proposer;
-    private Acceptor acceptor;
-    private Learner learner;
+    public Proposer proposer = new Proposer();
+    public Acceptor acceptor = new Acceptor();
+    public Learner learner;
+    
+    private boolean isLeader = false;  // indicates this node is acting as Paxos leader (defaults to false)
     
     // Node constructor takes name i.e. "John", "Paul", "Geroge", "Ringo", "Walrus"
     // IP Address and Port Number for communication
-    public Node(String name, String ip, int tcpport, int udpport){
-    	nodeName = name;
+    // Set leader = true to make this node the leader
+    public Node(String name, String ip, int tcpport, int udpport, boolean leader){
+    	setNodeName(name);
     	ipAddress = ip;
     	tcpPortNum = tcpport;
     	udpPortNum = udpport;
+    	isLeader = leader;
+    	proposer.node = this;
+    	acceptor.node = this;
     }
 
+    // Store a list of all other nodes
+    public void setNodeList(ArrayList<Node> calendarNodeList){
+    	nodeList = calendarNodeList;
+    }
+    
     // sends the message Message over TCP to the specified node Node
  	public void sendTCPMessage(Node node, Message message) throws IOException{
  	         
@@ -120,35 +133,35 @@ public class Node {
             	         case Prepare:
             	            {
             	    	    System.out.println("Prepare");
-            	    	    acceptor.prepareReceived(messageReceived);
+            	    	    acceptor.prepareReceived(messageReceived, nodeList);
             	    	    break;
             	            }
             	      
             	         case Promise:
         	                {
         	    	        System.out.println("Promise");
-        	    	        proposer.promiseReceived(messageReceived);
+        	    	        proposer.promiseReceived(messageReceived, nodeList);
         	    	        break;
         	                }
         	                
             	         case Accept:
             	         	{
             	        	System.out.println("Accept");
-            	        	acceptor.acceptReceived(messageReceived);
+            	        	acceptor.acceptReceived(messageReceived, nodeList);
             	        	break;
             	         	}
             	      
             	         case Ack:
             	         	{
             	        	System.out.println("Ack");
-            	        	proposer.ackReceived(messageReceived);
+            	        	proposer.ackReceived(messageReceived, nodeList);
             	        	break;
             	         	}
             	      
             	         case Commit:
             	         	{
             	        	System.out.println("Commit");
-            	        	acceptor.acceptReceived(messageReceived);
+            	        	acceptor.acceptReceived(messageReceived, nodeList);
             	        	break;
             	         	}
             	          
@@ -171,7 +184,7 @@ public class Node {
 	
 	// wait in an infinite loop to receive messages over TCP
 	void listenForTCPMessages(Calendar cal) throws IOException{
-	    	 
+		
 	// Start listening
 	ServerSocket listener = new ServerSocket(tcpPortNum);
 	    	 
@@ -218,6 +231,24 @@ public class Node {
 
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
+	}
+
+	// Determine if this node is paxos leader
+	public boolean isLeader() {
+		return isLeader;
+	}
+
+	// Make this node the paxos leader
+	public void setLeader(boolean isLeader) {
+		this.isLeader = isLeader;
+	}
+
+	public String getNodeName() {
+		return nodeName;
+	}
+
+	public void setNodeName(String nodeName) {
+		this.nodeName = nodeName;
 	}
 
 }
