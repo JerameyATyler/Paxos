@@ -168,7 +168,7 @@ public class Node {
             	      } // end switch paxos message handler
             	      
             	      // Used for debug purposes
-            	      System.out.printf("Received from: %s",messageReceived.msg);
+            	      //System.out.printf("Received from: %s",messageReceived.msg);
             	      
             	    } catch(Exception e) {
             	        e.printStackTrace();

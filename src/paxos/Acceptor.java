@@ -57,7 +57,7 @@ public class Acceptor {
 	}
 
 	public void prepareReceived(Message messageReceived, ArrayList<Node> nodeList){
-	    System.out.printf("Prepare Message Received from: %s\n",messageReceived.sender, messageReceived.msg);
+	    System.out.printf("Prepare Message Received from %s: %s\n",messageReceived.sender, messageReceived.msg);
 	    if (messageReceived.m > maxPrepare)
 	        {
 	    	maxPrepare = messageReceived.m;

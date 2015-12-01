@@ -90,6 +90,9 @@ public class Calendar
         George.setNodeList(nodeList);
         Ringo.setNodeList(nodeList);
         Walrus.setNodeList(nodeList);
+        
+        //Save the Node List
+        node.setNodeList(nodeList);
                 
         //Listen in the background for TCP messages
         Runnable backGroundRunnable = new Runnable(){
