@@ -20,7 +20,7 @@ interface Constant {
 	public static final String JOHN_IP = "52.33.135.248";
 	public static final String PAUL_IP = "54.208.8.249";
 	public static final String GEORGE_IP = "54.183.186.188";
-	public static final String RINGO_IP = "52.19.207 .28";
+	public static final String RINGO_IP = "52.19.207.28";
 	public static final String WALRUS_IP = "52.29.131.190"; 
     
     //Port number for all nodes	
