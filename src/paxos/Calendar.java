@@ -869,7 +869,7 @@ public class Calendar
     }
 
     //Write the log to disk
-    private void writeLog()
+    public void writeLog()
     {
         this.pruneLog();
         try (PrintWriter writer = new PrintWriter("log.txt", "UTF-8"))

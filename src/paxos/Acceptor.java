@@ -52,7 +52,31 @@ public class Acceptor {
 	}
 	
 	// send Ack to proposer
-	public void sendAck(){
+	public void sendAck(ArrayList<Node> nodeList){
+		
+		// send ack response to Proposer
+		// prepare reply
+        Message ackMessage = new Message();
+        ackMessage.msg = "ACK FROM ACCEPTOR!";
+        ackMessage.messageType = Constant.messageType.Ack;
+        ackMessage.sender = node.getNodeName();
+        ackMessage.accNum = accNum;
+        ackMessage.accVal = accVal;
+		
+		try
+            {
+	    	
+	    	//send the message to proposer
+	    	Iterator<Node> iterator = nodeList.iterator();
+	    	while(iterator.hasNext())
+	    	    {
+	    		node.sendUDPMessage(iterator.next(), ackMessage);
+	    	    }
+            }
+        catch (Exception ex)
+        {
+        	ex.printStackTrace();
+        }
 		
 	}
 
@@ -70,7 +94,7 @@ public class Acceptor {
 	        promiseMessage.accNum = accNum;
 	        promiseMessage.accVal = accVal;
 			
-	        // send promise response to all the Beatles
+	        // send promise response to Proposer
 		    try
 	            {
 		    	
@@ -90,6 +114,9 @@ public class Acceptor {
 	
 	public void acceptReceived(Message messageReceived, ArrayList<Node> nodeList){
 		 System.out.printf("Accept Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
+		 
+		 // send back Ack
+		 sendAck(nodeList);
 	}
 	
     public void commitReceived(Message messageReceived, ArrayList<Node> nodeList){

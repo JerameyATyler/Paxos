@@ -91,7 +91,7 @@ public class Node {
  	      
  	      socket.close();
  	      
- 	      System.out.println("DONE SENDING");
+ 	      System.out.printf("UDP Message Sent to %s\n",node.getNodeName());
  	      
  	    } catch(Exception e) {
  	        e.printStackTrace();
@@ -161,7 +161,10 @@ public class Node {
             	         case Commit:
             	         	{
             	        	System.out.println("Commit");
-            	        	acceptor.acceptReceived(messageReceived, nodeList);
+            	        	
+            	        	// Since we received the Commit write to the log
+            	        	cal.writeLog();
+            	        	acceptor.commitReceived(messageReceived, nodeList);
             	        	break;
             	         	}
             	          
