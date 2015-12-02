@@ -37,7 +37,7 @@ interface Constant {
     public enum messageType
     {
 
-        Prepare, Promise, Accept, Ack, Commit 
+        Prepare, Promise, Accept, Ack, Commit, Heartbeat, Coordinator, Election 
     }
 	    
 }
