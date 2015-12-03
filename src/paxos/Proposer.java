@@ -54,15 +54,62 @@ public class Proposer {
 	
 	// Send Accept
 	void sendAccept(ArrayList<Node> nodeList){
+		
+		// prepare message
+        Message acceptMessage = new Message();
+        acceptMessage.msg = "ACCEPT MESSAGE";
+        acceptMessage.messageType = Constant.messageType.Accept;
+        acceptMessage.sender = node.getNodeName();
+        acceptMessage.m = nextProposalNumber;
+		
+	    try
+            {
+	    	
+	    	//send the accept message to all the Beatles
+	    	Iterator<Node> iterator = nodeList.iterator();
+	    	while(iterator.hasNext())
+	    	    {
+	    		node.sendUDPMessage(iterator.next(), acceptMessage);
+	    	    }
+	    	
+            }
+        catch (Exception ex)
+        {
+        	ex.printStackTrace();
+        }
 		// send accept message to all acceptors
 	}
 	
 	
 	// Send Commit
 	void sendCommit(ArrayList<Node> nodeList){
+		// prepare message
+        Message commitMessage = new Message();
+        commitMessage.msg = "COMMIT MESSAGE";
+        commitMessage.messageType = Constant.messageType.Accept;
+        commitMessage.sender = node.getNodeName();
+        commitMessage.m = nextProposalNumber;
+		
+	    try
+            {
+	    	
+	    	//send the accept message to all the Beatles
+	    	Iterator<Node> iterator = nodeList.iterator();
+	    	while(iterator.hasNext())
+	    	    {
+	    		node.sendUDPMessage(iterator.next(), commitMessage);
+	    	    }
+	    	
+            }
+        catch (Exception ex)
+        {
+        	ex.printStackTrace();
+        }
+		// send accept message to all acceptors
 		
 	}
 	
+	// Promise message received
 	void promiseReceived(Message messageReceived, ArrayList<Node> nodeList){
 		System.out.printf("Promise Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
 	    
@@ -72,36 +119,16 @@ public class Proposer {
 	    	int accNum = messageReceived.accNum;
 	    	int accVal = messageReceived.accVal;
 	    	
-	    	// prepare reply
-	        Message acceptMessage = new Message();
-	        acceptMessage.msg = "PROMISE RECEIVED!";
-	        acceptMessage.messageType = Constant.messageType.Accept;
-	        acceptMessage.sender = node.getNodeName();
-	        acceptMessage.accNum = accNum;
-	        acceptMessage.accVal = accVal;
-			
-	        // send promise response to all the Beatles
-		    try
-	            {
-		    	
-		    	//send the message to all the Beatles
-		    	Iterator<Node> iterator = nodeList.iterator();
-		    	while(iterator.hasNext())
-		    	    {
-		    		node.sendUDPMessage(iterator.next(), acceptMessage);
-		    	    }
-	            }
-	        catch (Exception ex)
-	        {
-	        	ex.printStackTrace();
-	        }
+	    	sendAccept(nodeList);
+	    	
 	        }
 		
 	}
 	
+	// Ack message received
 	void ackReceived(Message messageReceived, ArrayList<Node> nodeList){
 		System.out.printf("Ack Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
+		
+		sendCommit(nodeList);
 	}
 }
-
-

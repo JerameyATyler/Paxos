@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Message implements Serializable {
 
 	int[][] dictionary;
-	ArrayList<EventRecord> log;
+	ArrayList<EventRecord> log;    //the entire log is the value for consensus
 	private static final long serialVersionUID = 1L;
 	// Added for testing purposes
 	String msg;
@@ -25,7 +25,7 @@ public class Message implements Serializable {
 	int m; 			// paxos message values
 	int accVal;    
 	int accNum;
-	int v;
+	int v;   // used for testing purposes
         //Properties for leader election
         String[] receivers;
         String highestId;
