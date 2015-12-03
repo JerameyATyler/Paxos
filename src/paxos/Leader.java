@@ -135,7 +135,7 @@ public class Leader
             //Add this id to list of receivers
             for (int i = 0; i < receivers.length; i++)
             {
-                if (receivers[i] != null)
+                if (receivers[i] == null)
                 {
                     receivers[i] = this.id;
                     break;
