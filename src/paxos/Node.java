@@ -285,7 +285,7 @@ public class Node
                                 break;
                             }
                         }
-                        cal.receive(messageReceived);
+                        //cal.receive(messageReceived);
 
                     }
                     catch (ClassNotFoundException e)
