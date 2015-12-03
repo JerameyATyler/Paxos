@@ -141,6 +141,10 @@ public class Leader
                     break;
                 }
             }
+            if(this.id.compareTo(highestId) < 0)
+            {
+                highestId = this.id;
+            }
 
             election(highestId, receivers);
         }
@@ -177,7 +181,7 @@ public class Leader
             this.leader = nodeMap.get(highestId);
             for (int i = 0; i < receivers.length; i++)
             {
-                if (receivers[i] != null)
+                if (receivers[i] == null)
                 {
                     receivers[i] = this.id;
                     break;
