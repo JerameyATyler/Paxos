@@ -20,18 +20,18 @@ import java.util.Scanner;
 public class Calendar
 {
     // Only uncomment ONE of these entries based on this AWS instance
-    Node node = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, true);
-    //Node node = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false);
-    //Node node = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false);
-    //Node node = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false);
-    //Node node = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false);
+    Node node = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, true, true);
+    //Node node = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false, true);
+    //Node node = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false, true);
+    //Node node = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false, true);
+    //Node node = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false, true);
 	
     //Create all node instances - Initially John is leader
-    Node John = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, true);
-    Node Paul = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false);
-    Node George = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false);
-    Node Ringo = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false);
-    Node Walrus = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false);
+    Node John = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, true, false);
+    Node Paul = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false, false);
+    Node George = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false, false);
+    Node Ringo = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false, false);
+    Node Walrus = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, false, false);
     
     //Add a list of the nodes so each node knows how to communicate with the rest
     ArrayList<Node> nodeList=new ArrayList<Node>();

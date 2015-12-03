@@ -30,11 +30,15 @@ public class Node
 
     private Leader leaderElection;
     private boolean isLeader = false;  // indicates this node is acting as Paxos leader (defaults to false)
+    
+    //Indicates whether or not this node is the primary node for this instance 
+    //(not one of the neighboring nodes). Used to start leader election.
+    private boolean primaryNode = false; 
 
     // Node constructor takes name i.e. "John", "Paul", "Geroge", "Ringo", "Walrus"
     // IP Address and Port Number for communication
     // Set leader = true to make this node the leader
-    public Node(String name, String ip, int tcpport, int udpport, boolean leader)
+    public Node(String name, String ip, int tcpport, int udpport, boolean leader, boolean primaryNode)
     {
         setNodeName(name);
         ipAddress = ip;
@@ -43,6 +47,7 @@ public class Node
         isLeader = leader;
         proposer.node = this;
         acceptor.node = this;
+        this.primaryNode = primaryNode;
 
     }
 
@@ -50,8 +55,11 @@ public class Node
     public void setNodeList(ArrayList<Node> calendarNodeList)
     {
         nodeList = calendarNodeList;
+        if(primaryNode)
+        {
         this.setNodeMap(calendarNodeList);
         this.setLeaderElection();
+        }
     }
 
     private void setNodeMap(ArrayList<Node> calendarNodeList)
