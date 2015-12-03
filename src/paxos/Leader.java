@@ -1,19 +1,23 @@
 
 package paxos;
+
+import java.util.HashMap;
+
 /* Distributed Systems Project #2 
  * Jeramey Tyler
  * John Sheehan
  * 
  * Leader Class - Handles leader elections
  */
-
 public class Leader
 {
 
-    //Downstream nodes
-    Node[] downstreamNodes = new Node[4];
+    //Downstream nodes keys in order
+    String[] downstreamNodes;
+    //Map of nodes
+    HashMap<String, Node> nodeMap;
     //Id of this node
-    int id;
+    String id;
     //The current node
     Node current;
     //Id of leader node
@@ -21,14 +25,15 @@ public class Leader
 
     //Leader constructor takes a list of all downstream neighbors and an integer
     //representing the id of this node
-    public Leader(Node[] downstreamNodes, Node current)
+    public Leader(String[] downstreamNodes, Node current,
+                  HashMap<String, Node> nodeMap)
     {
         //Initialize downstreamNodes and id
         this.downstreamNodes = downstreamNodes;
         this.current = current;
-
+        this.nodeMap = nodeMap;
         //Create list of receivers and initiate election
-        int[] receivers = new int[5];
+        String[] receivers = new String[5];
         receivers[0] = this.id;
         election(this.id, receivers);
 
@@ -62,8 +67,8 @@ public class Leader
             try
             {
                 Thread.sleep(10000);
-                //TODO: Add check for this.id != leader.id
-                if (this.leader != null)
+                if (this.leader != null && !this.id.equals(this.leader.
+                        getNodeName()))
                 {
 
                     Message m = new Message();
@@ -78,7 +83,7 @@ public class Leader
                 if (ex instanceof java.net.SocketException)
                 {
                     //Create list of receivers and initiate election
-                    int[] receivers = new int[5];
+                    String[] receivers = new String[5];
                     receivers[0] = this.id;
                     election(this.id, receivers);
                 }
@@ -87,9 +92,9 @@ public class Leader
     }
 
     //Send election message downstream
-    private void election(int highestId, int[] receivers)
+    private void election(String highestId, String[] receivers)
     {
-        for (Node downstreamNode : this.downstreamNodes)
+        for (String downstreamNode : this.downstreamNodes)
         {
             try
             {
@@ -100,7 +105,7 @@ public class Leader
                 m.highestId = highestId;
                 m.receivers = receivers;
 
-                this.current.sendTCPMessage(downstreamNode, m);
+                this.current.sendTCPMessage(nodeMap.get(downstreamNode), m);
                 //If message is sent without throwing exception then node is live
                 break;
             }
@@ -108,18 +113,17 @@ public class Leader
             {
                 ex.printStackTrace();
             }
-            //TODO: Should we go ahead and call coordinator if no other node is alive?
         }
     }
 
-    public void receiveElection(int highestId, int[] receivers)
+    public void receiveElection(String highestId, String[] receivers)
     {
-        if (receivers[0] == this.id)
+        if (receivers[0].equals(this.id))
         {
             leader = this.current;
 
             //Create list of receivers and initiate election
-            receivers = new int[5];
+            receivers = new String[5];
             receivers[0] = this.id;
 
             coordinator(this.id, receivers);
@@ -129,7 +133,7 @@ public class Leader
             //Add this id to list of receivers
             for (int i = 0; i < receivers.length; i++)
             {
-                if (receivers[i] == 0)
+                if (receivers[i].equals(""))
                 {
                     receivers[i] = this.id;
                     break;
@@ -140,9 +144,9 @@ public class Leader
         }
     }
 
-    private void coordinator(int highestId, int[] receivers)
+    private void coordinator(String highestId, String[] receivers)
     {
-        for (Node downstreamNode : this.downstreamNodes)
+        for (String downstreamNode : this.downstreamNodes)
         {
             try
             {
@@ -153,7 +157,7 @@ public class Leader
                 m.highestId = highestId;
                 m.receivers = receivers;
 
-                this.current.sendTCPMessage(downstreamNode, m);
+                this.current.sendTCPMessage(nodeMap.get(downstreamNode), m);
                 //If message is sent without throwing exception then node is live
                 break;
             }
@@ -161,32 +165,23 @@ public class Leader
             {
                 ex.printStackTrace();
             }
-            //TODO: Should we go ahead and call coordinator if no other node is alive?
         }
     }
 
-    public void receiveCoordinator(int highestId, int[] receivers)
+    public void receiveCoordinator(String highestId, String[] receivers)
     {
-        if(receivers[0] != this.id)
+        if (!receivers[0].equals(this.id))
         {
-            for(Node node: downstreamNodes)
+            this.leader = nodeMap.get(highestId);
+            for (int i = 0; i < receivers.length; i++)
             {
-                //TODO
-                //if(node.Id == highestId)
-                {
-                    this.leader = node;
-                }
-            }
-            
-            for(int i = 0; i < receivers.length; i++)
-            {
-                if(receivers[i] == 0)
+                if (receivers[i].equals(""))
                 {
                     receivers[i] = this.id;
                     break;
                 }
             }
-            
+
             coordinator(highestId, receivers);
         }
     }

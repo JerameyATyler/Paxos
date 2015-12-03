@@ -27,6 +27,6 @@ public class Message implements Serializable {
 	int accNum;
 	int v;
         //Properties for leader election
-        int[] receivers;
-        int highestId;
+        String[] receivers;
+        String highestId;
 }
