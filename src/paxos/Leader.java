@@ -50,7 +50,6 @@ public class Leader
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace();
                 }
             }
         };
@@ -113,7 +112,6 @@ public class Leader
             }
             catch (Exception ex)
             {
-                ex.printStackTrace();
             }
         }
     }
@@ -122,13 +120,13 @@ public class Leader
     {
         if (receivers[0].equals(this.id))
         {
-            leader = this.current;
+            this.leader = this.nodeMap.get(highestId);
 
             //Create list of receivers and initiate election
             receivers = new String[5];
             receivers[0] = this.id;
 
-            coordinator(this.id, receivers);
+            coordinator(highestId, receivers);
         }
         else
         {
@@ -169,7 +167,6 @@ public class Leader
             }
             catch (Exception ex)
             {
-                ex.printStackTrace();
             }
         }
     }
