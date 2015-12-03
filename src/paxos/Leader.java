@@ -32,6 +32,8 @@ public class Leader
         this.downstreamNodes = downstreamNodes;
         this.current = current;
         this.nodeMap = nodeMap;
+        
+        this.id = this.current.getNodeName();
         //Create list of receivers and initiate election
         String[] receivers = new String[5];
         receivers[0] = this.id;
