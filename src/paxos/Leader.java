@@ -135,7 +135,7 @@ public class Leader
             //Add this id to list of receivers
             for (int i = 0; i < receivers.length; i++)
             {
-                if (receivers[i].equals(""))
+                if (receivers[i] != null)
                 {
                     receivers[i] = this.id;
                     break;
@@ -177,7 +177,7 @@ public class Leader
             this.leader = nodeMap.get(highestId);
             for (int i = 0; i < receivers.length; i++)
             {
-                if (receivers[i].equals(""))
+                if (receivers[i] != null)
                 {
                     receivers[i] = this.id;
                     break;
