@@ -199,7 +199,7 @@ public class Node
                         case Commit:
                         {
                             //System.out.println("Commit");
-                            acceptor.acceptReceived(messageReceived, nodeList);
+                            acceptor.commitReceived(messageReceived, nodeList);
                             break;
                         }
 
