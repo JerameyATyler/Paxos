@@ -170,35 +170,35 @@ public class Node
 
                         case Prepare:
                         {
-                            System.out.println("Prepare");
+                            //System.out.println("Prepare");
                             acceptor.prepareReceived(messageReceived, nodeList);
                             break;
                         }
 
                         case Promise:
                         {
-                            System.out.println("Promise");
+                            //System.out.println("Promise");
                             proposer.promiseReceived(messageReceived, nodeList);
                             break;
                         }
 
                         case Accept:
                         {
-                            System.out.println("Accept");
+                            //System.out.println("Accept");
                             acceptor.acceptReceived(messageReceived, nodeList);
                             break;
                         }
 
                         case Ack:
                         {
-                            System.out.println("Ack");
+                            //System.out.println("Ack");
                             proposer.ackReceived(messageReceived, nodeList);
                             break;
                         }
 
                         case Commit:
                         {
-                            System.out.println("Commit");
+                            //System.out.println("Commit");
                             acceptor.acceptReceived(messageReceived, nodeList);
                             break;
                         }

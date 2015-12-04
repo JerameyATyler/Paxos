@@ -80,9 +80,12 @@ public class Proposer {
 	    	
 	    	//send the prepare message to all the Beatles
 	    	Iterator<Node> iterator = nodeList.iterator();
+	    	Node Beatle = iterator.next();
 	    	while(iterator.hasNext())
 	    	    {
-	    		node.sendUDPMessage(iterator.next(), prepareMessage);
+	    		node.sendUDPMessage(Beatle, prepareMessage);
+	    		System.out.printf("Prepare message sent to %s\n",Beatle.getNodeName());
+	    		Beatle=iterator.next();
 	    	    }
 	    	
             }
@@ -127,11 +130,14 @@ public class Proposer {
 	    try
             {
 	    	
-	    	//send the accept message to all the Beatles
+	    	//send the Accept message to all the Beatles
 	    	Iterator<Node> iterator = nodeList.iterator();
+	    	Node Beatle = iterator.next();
 	    	while(iterator.hasNext())
 	    	    {
-	    		node.sendUDPMessage(iterator.next(), acceptMessage);
+	    		node.sendUDPMessage(Beatle, acceptMessage);
+	    		System.out.printf("Accept message sent to %s\n",Beatle.getNodeName());
+	    		Beatle=iterator.next();
 	    	    }
 	    	
             }
@@ -152,19 +158,21 @@ public class Proposer {
 		// prepare message
         Message commitMessage = new Message();
         commitMessage.msg = "Commit";
-        commitMessage.messageType = Constant.messageType.Accept;
+        commitMessage.messageType = Constant.messageType.Commit;
         commitMessage.sender = node.getNodeName();
         commitMessage.m = nextProposalNumber;
         commitMessage.log = accLog;
 		
 	    try
             {
-	    	
-	    	//send the accept message to all the Beatles
+	    	//send the commit message to all the Beatles
 	    	Iterator<Node> iterator = nodeList.iterator();
+	    	Node Beatle = iterator.next();
 	    	while(iterator.hasNext())
 	    	    {
-	    		node.sendUDPMessage(iterator.next(), commitMessage);
+	    		node.sendUDPMessage(Beatle, commitMessage);
+	    		System.out.printf("Commit message sent to %s\n",Beatle.getNodeName());
+	    		Beatle=iterator.next();
 	    	    }
 	    	
             }

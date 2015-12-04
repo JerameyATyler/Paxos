@@ -129,8 +129,8 @@ public class Calendar
             //Prompt user for input
             while (cont)
             {
-                System.out.println("Welcome to calendar. Enter the number "
-                        + "corresponding to what you want to do: ");
+                System.out.printf("Welcome to %s's calendar. Enter the number "
+                        + "corresponding to what you want to do: \n",node.getNodeName());
                 System.out.println("1) Create appointment");
                 System.out.println("2) Delete appointment");
                 //System.out.println("3) Edit appointment");

@@ -55,7 +55,7 @@ public class Acceptor {
 	}
 	
 	
-
+    // Prepare message received from Proposer
 	public void prepareReceived(Message messageReceived, ArrayList<Node> nodeList){
 	    System.out.printf("Prepare Message Received from %s: %s\n",messageReceived.sender, messageReceived.msg);
 	    if (messageReceived.m > maxPrepare)
@@ -82,7 +82,11 @@ public class Acceptor {
 		    	    {
 		    		proposer = iterator.next();
 		    		if (proposer.getNodeName().equals(messageReceived.sender))
-		    		   node.sendUDPMessage(iterator.next(), promiseMessage);
+		    		   {	
+		    		   node.sendUDPMessage(proposer, promiseMessage);
+		    	       System.out.printf("Promise message sent to %s:\n",proposer.getNodeName());
+		    		   }
+		    		   
 		    	    }
 	            }
 	        catch (Exception ex)
@@ -134,7 +138,10 @@ public class Acceptor {
 	    	    {
 	    		proposer = iterator.next();
 	    		if (proposer.getNodeName().equals(sender))
-	    		   node.sendUDPMessage(iterator.next(), ackMessage);
+	    		   {	
+	    		   node.sendUDPMessage(proposer, ackMessage);
+	    		   System.out.printf("Ack message sent to %s:\n",proposer.getNodeName());
+	    		   }
 	    	    }
              }
          catch (Exception ex)
