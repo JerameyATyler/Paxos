@@ -248,7 +248,7 @@ public class Calendar
         if (this.isValidAppointment(m.apt))
         {
             this.appointments[m.apt.creator].add(m.apt);
-            boolean[] attendees = new boolean[4];
+            boolean[] attendees = new boolean[Constant.NUMBER_OF_NODES];
             System.arraycopy(m.apt.attendees, 0, attendees, 0, attendees.length);
 
             Appointment newApppointment = new Appointment(m.apt.creator,
@@ -584,9 +584,9 @@ public class Calendar
     private boolean[] getAttendees()
     {
         String prompt = "Enter the numbers of the attendess separated by "
-                + "commas:\n1)Jon\n2)Paul\n3)George\n4)Ringo";
+                + "commas:\n1)John\n2)Paul\n3)George\n4)Ringo\n5)Walrus";
         boolean cont = true;
-        boolean[] attendees = new boolean[4];
+        boolean[] attendees = new boolean[Constant.NUMBER_OF_NODES];
         attendees[userNumber] = true;
         while (cont)
         {
@@ -606,7 +606,7 @@ public class Calendar
                 catch (Exception ex)
                 {
                     System.out.println("One or more input was incorrect!");
-                    attendees = new boolean[4];
+                    attendees = new boolean[Constant.NUMBER_OF_NODES];
                     cont = true;
                     break;
                 }
@@ -629,6 +629,7 @@ public class Calendar
             System.out.println("2) Paul");
             System.out.println("3) George");
             System.out.println("4) Ringo");
+            System.out.println("5) Walrus");
 
             Scanner s = new Scanner(System.in);
             String aptIndexStr = s.nextLine();
@@ -636,7 +637,7 @@ public class Calendar
             if (this.isValidInt(aptIndexStr))
             {
                 aptIndex = Integer.parseInt(aptIndexStr);
-                if (aptIndex >= 1 && aptIndex <= 4)
+                if (aptIndex >= 1 && aptIndex <= Constant.NUMBER_OF_NODES)
                 {
                     aptIndex -= 1;
                     cont = false;
@@ -687,7 +688,7 @@ public class Calendar
                 String attendees = "";
                 String[] attendeesStr =
                 {
-                    "John", "Paul", "George", "Ringo"
+                    "John", "Paul", "George", "Ringo", "Walrus"
                 };
                 for (int i = 0; i < appt.attendees.length; i++)
                 {
@@ -857,7 +858,7 @@ public class Calendar
     //Reconstruct dictionary from stable log
     private void reconstructDictionary()
     {
-        int[][] tempDictionary = new int[4][4];
+        int[][] tempDictionary = new int[Constant.NUMBER_OF_NODES][Constant.NUMBER_OF_NODES];
         for (EventRecord eR : this.log)
         {
             int creatorNumber = Integer.parseInt(eR.parameters.split(" ")[0]);

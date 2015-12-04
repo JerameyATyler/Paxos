@@ -49,6 +49,8 @@ public class Node
         acceptor.node = this;
         this.primaryNode = primaryNode;
 
+        proposer.initializeProposalNumber();
+        
     }
 
     // Store a list of all other nodes
@@ -121,9 +123,6 @@ public class Node
             socket.send(packet);
 
             socket.close();
-
-            System.out.println("DONE SENDING");
-
         }
         catch (Exception e)
         {

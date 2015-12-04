@@ -33,6 +33,9 @@ interface Constant {
     //Number of Nodes
     static final int NUMBER_OF_NODES = 5;        // five nodes in this paxos implementation
     
+    //Max Number of Proposals
+    static final int MAX_PROPOSALS = 1000;		 // used to ensure proposal numbers are unique
+    
     //Enum for the the different message types
     public enum messageType
     {

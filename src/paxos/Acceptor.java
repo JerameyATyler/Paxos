@@ -21,6 +21,9 @@ public class Acceptor {
 	private int accNum = -1;    //largest proposal number of proposal it has accepted (initially -1 for null)
 	private int accVal = -1;    //value of proposal numbered accNum (initially -1 for null) 
 	
+    //Store the list of event records that are part of the log as the accepted value
+    ArrayList<EventRecord> accLog = new ArrayList();
+	
 	// Obtain largest proposal number for which it has responded to a prepare message
 	public int getMaxPrepare() {
 		return maxPrepare;
@@ -57,7 +60,7 @@ public class Acceptor {
 		// send ack response to Proposer
 		// prepare reply
         Message ackMessage = new Message();
-        ackMessage.msg = "ACK FROM ACCEPTOR!";
+        ackMessage.msg = "Ack";
         ackMessage.messageType = Constant.messageType.Ack;
         ackMessage.sender = node.getNodeName();
         ackMessage.accNum = accNum;
@@ -88,12 +91,12 @@ public class Acceptor {
 	    	
 	    	// prepare reply
 	        Message promiseMessage = new Message();
-	        promiseMessage.msg = "HELLO FROM ACCEPTOR!";
+	        promiseMessage.msg = "Promise";
 	        promiseMessage.messageType = Constant.messageType.Promise;
 	        promiseMessage.sender = node.getNodeName();
 	        promiseMessage.accNum = accNum;
 	        promiseMessage.accVal = accVal;
-			
+	        
 	        // send promise response to Proposer
 		    try
 	            {
@@ -115,8 +118,17 @@ public class Acceptor {
 	public void acceptReceived(Message messageReceived, ArrayList<Node> nodeList){
 		 System.out.printf("Accept Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
 		 
-		 // send back Ack
-		 sendAck(nodeList);
+		 // Record Accept
+		 if (messageReceived.m >= maxPrepare)
+		    {  
+		    accNum = messageReceived.m;
+		    accVal = messageReceived.v;
+		    accLog = messageReceived.log;
+			
+		    // send back Ack
+			sendAck(nodeList);
+		    }
+		
 	}
 	
     public void commitReceived(Message messageReceived, ArrayList<Node> nodeList){
