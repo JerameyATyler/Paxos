@@ -54,34 +54,7 @@ public class Acceptor {
 		this.accVal = accVal;
 	}
 	
-	// send Ack to proposer
-	public void sendAck(ArrayList<Node> nodeList){
-		
-		// send ack response to Proposer
-		// prepare reply
-        Message ackMessage = new Message();
-        ackMessage.msg = "Ack";
-        ackMessage.messageType = Constant.messageType.Ack;
-        ackMessage.sender = node.getNodeName();
-        ackMessage.accNum = accNum;
-        ackMessage.accVal = accVal;
-		
-		try
-            {
-	    	
-	    	//send the message to proposer
-	    	Iterator<Node> iterator = nodeList.iterator();
-	    	while(iterator.hasNext())
-	    	    {
-	    		node.sendUDPMessage(iterator.next(), ackMessage);
-	    	    }
-            }
-        catch (Exception ex)
-        {
-        	ex.printStackTrace();
-        }
-		
-	}
+	
 
 	public void prepareReceived(Message messageReceived, ArrayList<Node> nodeList){
 	    System.out.printf("Prepare Message Received from %s: %s\n",messageReceived.sender, messageReceived.msg);
@@ -94,6 +67,7 @@ public class Acceptor {
 	        promiseMessage.msg = "Promise";
 	        promiseMessage.messageType = Constant.messageType.Promise;
 	        promiseMessage.sender = node.getNodeName();
+	        promiseMessage.m = messageReceived.m;
 	        promiseMessage.accNum = accNum;
 	        promiseMessage.accVal = accVal;
 	        
@@ -101,11 +75,14 @@ public class Acceptor {
 		    try
 	            {
 		    	
-		    	//send the message to all the Beatles
+		    	//send message to the proposer
 		    	Iterator<Node> iterator = nodeList.iterator();
+		    	Node proposer;
 		    	while(iterator.hasNext())
 		    	    {
-		    		node.sendUDPMessage(iterator.next(), promiseMessage);
+		    		proposer = iterator.next();
+		    		if (proposer.getNodeName().equals(messageReceived.sender))
+		    		   node.sendUDPMessage(iterator.next(), promiseMessage);
 		    	    }
 	            }
 	        catch (Exception ex)
@@ -126,7 +103,7 @@ public class Acceptor {
 		    accLog = messageReceived.log;
 			
 		    // send back Ack
-			sendAck(nodeList);
+			sendAck(messageReceived.sender,nodeList);
 		    }
 		
 	}
@@ -135,4 +112,36 @@ public class Acceptor {
     	 System.out.printf("Commit Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
 	}
 	
+ // send Ack to proposer
+ 	public void sendAck(String sender, ArrayList<Node> nodeList){
+ 		
+ 		// send ack response to Proposer
+ 		// prepare reply
+         Message ackMessage = new Message();
+         ackMessage.msg = "Ack";
+         ackMessage.messageType = Constant.messageType.Ack;
+         ackMessage.sender = node.getNodeName();
+         ackMessage.accNum = accNum;
+         ackMessage.accVal = accVal;
+ 		
+ 		try
+             {
+ 	    	
+ 			//send message to the proposer
+	    	Iterator<Node> iterator = nodeList.iterator();
+	    	Node proposer;
+	    	while(iterator.hasNext())
+	    	    {
+	    		proposer = iterator.next();
+	    		if (proposer.getNodeName().equals(sender))
+	    		   node.sendUDPMessage(iterator.next(), ackMessage);
+	    	    }
+             }
+         catch (Exception ex)
+         {
+         	ex.printStackTrace();
+         }
+ 		
+ 	}
+    
 }
