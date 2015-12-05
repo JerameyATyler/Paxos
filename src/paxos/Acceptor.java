@@ -84,7 +84,7 @@ public class Acceptor {
 		    		if (proposer.getNodeName().equals(messageReceived.sender))
 		    		   {	
 		    		   node.sendUDPMessage(proposer, promiseMessage);
-		    	       System.out.printf("Promise message sent to %s:\n",proposer.getNodeName());
+		    	       System.out.printf("Promise message# %d sent to %s:\n",promiseMessage.m,proposer.getNodeName());
 		    		   }
 		    		   
 		    	    }
@@ -97,7 +97,7 @@ public class Acceptor {
 	}
 	
 	public void acceptReceived(Message messageReceived, ArrayList<Node> nodeList){
-		 System.out.printf("Accept Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
+		 System.out.printf("Accept Message# %d Received from %s: %s\n",messageReceived.m, messageReceived.sender,messageReceived.msg);
 		 
 		 // Record Accept
 		 if (messageReceived.m >= maxPrepare)
@@ -107,17 +107,17 @@ public class Acceptor {
 		    accLog = messageReceived.log;
 			
 		    // send back Ack
-			sendAck(messageReceived.sender,nodeList);
+			sendAck(messageReceived,nodeList);
 		    }
 		
 	}
 	
     public void commitReceived(Message messageReceived, ArrayList<Node> nodeList){
-    	 System.out.printf("Commit Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
+    	 System.out.printf("Commit Message# %d Received from %s: %s\n",messageReceived.m,messageReceived.sender,messageReceived.msg);
 	}
 	
  // send Ack to proposer
- 	public void sendAck(String sender, ArrayList<Node> nodeList){
+ 	public void sendAck(Message messageReceived, ArrayList<Node> nodeList){
  		
  		// send ack response to Proposer
  		// prepare reply
@@ -127,6 +127,8 @@ public class Acceptor {
          ackMessage.sender = node.getNodeName();
          ackMessage.accNum = accNum;
          ackMessage.accVal = accVal;
+         ackMessage.m = messageReceived.m;
+         ackMessage.log = messageReceived.log;
  		
  		try
              {
@@ -137,10 +139,10 @@ public class Acceptor {
 	    	while(iterator.hasNext())
 	    	    {
 	    		proposer = iterator.next();
-	    		if (proposer.getNodeName().equals(sender))
+	    		if (proposer.getNodeName().equals(messageReceived.sender))
 	    		   {	
 	    		   node.sendUDPMessage(proposer, ackMessage);
-	    		   System.out.printf("Ack message sent to %s:\n",proposer.getNodeName());
+	    		   System.out.printf("Ack message# %d sent to %s:\n",ackMessage.m,proposer.getNodeName());
 	    		   }
 	    	    }
              }

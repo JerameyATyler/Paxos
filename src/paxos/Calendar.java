@@ -524,7 +524,7 @@ public class Calendar
             m.log = this.log;
             m.apt = toRemove;
             m.eventType = 2;
-            this.pruneLog();
+            //this.pruneLog();
             this.reconstructAppointmentList();
             this.send(m);           
         }
@@ -893,7 +893,7 @@ public class Calendar
     //Write the log to disk
     public void writeLog()
     {
-        this.pruneLog();
+        //this.pruneLog();
         try (PrintWriter writer = new PrintWriter("log.txt", "UTF-8"))
         {
             this.log.stream().

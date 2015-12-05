@@ -22,7 +22,7 @@ public class Proposer {
 	private int nextProposalNumber;
     
     //Keep track of all the proposals
-    Proposal[] proposals = new Proposal[Constant.MAX_PROPOSALS];
+    static Proposal[] proposals = new Proposal[Constant.MAX_PROPOSALS];
     
    // Proposal[Constant.MAX_PROPOSALS] proposals=new Proposal[];
 	
@@ -89,7 +89,7 @@ public class Proposer {
 	    	    {
 	    		Beatle=iterator.next();
 	    		node.sendUDPMessage(Beatle, prepareMessage);
-	    		System.out.printf("Prepare message sent to %s\n",Beatle.getNodeName());
+	    		System.out.printf("Prepare message# %d sent to %s\n",prepareMessage.m,Beatle.getNodeName());
 	    	    }
 	    	
             }
@@ -103,7 +103,7 @@ public class Proposer {
 	// Promise message received
 	void promiseReceived(Message messageReceived, ArrayList<Node> nodeList){
 		
-		System.out.printf("Promise Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
+		System.out.printf("Promise Message# %d Received from %s: %s\n",messageReceived.m,messageReceived.sender,messageReceived.msg);
 		    
 		proposals[messageReceived.m-firstProposalNumber].addAcceptance();
 			
@@ -140,7 +140,7 @@ public class Proposer {
 	    	while(iterator.hasNext())
 	    	    {
 	    		node.sendUDPMessage(Beatle, acceptMessage);
-	    		System.out.printf("Accept message sent to %s\n",Beatle.getNodeName());
+	    		System.out.printf("Accept message# %d sent to %s\n",messageReceived.m,Beatle.getNodeName());
 	    		Beatle=iterator.next();
 	    	    }
 	    	
@@ -175,7 +175,7 @@ public class Proposer {
 	    	while(iterator.hasNext())
 	    	    {
 	    		node.sendUDPMessage(Beatle, commitMessage);
-	    		System.out.printf("Commit message sent to %s\n",Beatle.getNodeName());
+	    		System.out.printf("Commit message# %d sent to %s\n",messageReceived.m,Beatle.getNodeName());
 	    		Beatle=iterator.next();
 	    	    }
 	    	
@@ -190,7 +190,7 @@ public class Proposer {
 	
 	// Ack message received
 	void ackReceived(Message messageReceived, ArrayList<Node> nodeList){
-		System.out.printf("Ack Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
+		System.out.printf("Ack Message# %d Received from %s: %s\n",messageReceived.m,messageReceived.sender,messageReceived.msg);
 		
 		sendCommit(messageReceived, nodeList);
 	}
