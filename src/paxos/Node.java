@@ -200,6 +200,10 @@ public class Node
                         {
                             //System.out.println("Commit");
                             acceptor.commitReceived(messageReceived, nodeList);
+                            cal.log = messageReceived.log;
+                            cal.writeLog();
+                            cal.reconstructAppointmentList();
+                            System.out.println("Calendar Log Updated by Commit\n");
                             break;
                         }
 

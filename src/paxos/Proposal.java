@@ -7,6 +7,8 @@
 
 package paxos;
 
+import java.util.ArrayList;
+
 public class Proposal {
 	private int proposalNumber;
 	private int numberAccepts = 0;
@@ -15,6 +17,9 @@ public class Proposal {
 	// initially unset
 	public int accNum = -1;
 	public int accVal = -1;
+	
+	public int[][] dictionary;
+	public ArrayList<EventRecord> log;
 	
 	public Proposal(int propNumber){
 		setProposalNumber(propNumber);

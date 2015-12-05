@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
 
 public class Calendar
@@ -93,6 +94,9 @@ public class Calendar
         
         //Save the Node List
         node.setNodeList(nodeList);
+        
+        //Store Leader Node (Defaults to John)
+        Node Leader = John;
                 
         //Listen in the background for TCP messages
         Runnable backGroundRunnable = new Runnable(){
@@ -125,6 +129,21 @@ public class Calendar
         // Display Calendar User Interface
         while (cont)
         {
+        	 //Find the Leader
+	    	Iterator<Node> iterator = nodeList.iterator();
+	    	Node Beatle = iterator.next();
+	    	
+	    	while(iterator.hasNext())
+	    	    {
+	    		if (Beatle.isLeader())
+	    		   {	
+	    		   System.out.printf("Node %s is the Leader\n\n",Beatle.getNodeName());
+                   Leader = Beatle;
+	    		   }
+	    		   
+	    		Beatle=iterator.next();
+	    	    }
+        	
             String in = "";
             //Prompt user for input
             while (cont)
@@ -141,14 +160,11 @@ public class Calendar
                 in = s.nextLine();
                 cont = !this.isValidInt(in);
             }
-
+            
             cont = true;
 
             int input = Integer.parseInt(in);
-
-            // Paxos Test
-            node.proposer.sendPrepare(nodeList);
-            
+                    
             //Invoke appropriate functions from user input
             switch (input)
             {
@@ -180,7 +196,12 @@ public class Calendar
                         m.dictionary = this.dictionary;
                         m.apt = apt;
                         m.eventType = 1;
-                        this.send(m);
+                       
+                        //Initiate paxos protocol to add appointment      	       
+                        System.out.println("Request sent to add this appointment to the Calendars...\n");
+                        Leader.proposer.sendPrepare(this.dictionary,this.log,nodeList);
+                        
+                        //this.send(m);
                     }
                     else
                     {
@@ -323,7 +344,7 @@ public class Calendar
 
         int aptIndex = this.getInt(1, apts.size(), prompt) - 1;
 
-        boolean[] usersToNotify = new boolean[4];
+        boolean[] usersToNotify = new boolean[Constant.NUMBER_OF_NODES];
         for (int i = 0; i < usersToNotify.length; i++)
         {
             if (apts.get(aptIndex).attendees[i])
@@ -1074,10 +1095,10 @@ public class Calendar
     }
 
     //Recreate appointments lists from log
-    private void reconstructAppointmentList()
+    public void reconstructAppointmentList()
     {
     	ArrayList<Appointment>[] tempAppointments
-        = (ArrayList<Appointment>[]) new ArrayList[4];
+        = (ArrayList<Appointment>[]) new ArrayList[Constant.NUMBER_OF_NODES];
     	
     	for (int i = 0; i < tempAppointments.length; i++)
         {
@@ -1090,7 +1111,7 @@ public class Calendar
             int creator = Integer.parseInt(params[0]);
             String name = params[1];
             String[] attendeesStrings = params[2].split(",");
-            boolean[] attendees = new boolean[4];
+            boolean[] attendees = new boolean[Constant.NUMBER_OF_NODES];
             for (String at : attendeesStrings)
             {
                 int i = Integer.parseInt(at);

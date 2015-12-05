@@ -20,9 +20,6 @@ public class Proposer {
 	
 	// Proposer numbers need to be unique for all nodes
 	private int nextProposalNumber;
-	
-    //Store the list of event records that are part of the log as the accepted value
-    ArrayList<EventRecord> accLog = new ArrayList();
     
     //Keep track of all the proposals
     Proposal[] proposals = new Proposal[Constant.MAX_PROPOSALS];
@@ -59,10 +56,18 @@ public class Proposer {
 	   }
 	   
 	// sends a Prepare message to all acceptors
-	public void sendPrepare(ArrayList<Node> nodeList){
+	public void sendPrepare(
+			int[][] dictionary,
+			ArrayList<EventRecord> log,
+			ArrayList<Node> nodeList){
 		
 		// create a new unique proposal number
-		proposals[nextProposalNumber-firstProposalNumber] = new Proposal(nextProposalNumber);
+		Proposal proposal = new Proposal(nextProposalNumber);
+		proposal.dictionary = dictionary;
+		proposal.log = log;		
+		
+		// store this proposal in a proposal list
+		proposals[nextProposalNumber-firstProposalNumber] = proposal;
 		
 		//System.out.printf("Proposal Number %d\n",proposals[nextProposalNumber-firstProposalNumber-1].getProposalNumber());
 		
@@ -71,21 +76,20 @@ public class Proposer {
         prepareMessage.msg = "Prepare";
         prepareMessage.messageType = Constant.messageType.Prepare;
         prepareMessage.sender = node.getNodeName();
-        prepareMessage.m = nextProposalNumber;
+        prepareMessage.m = proposal.getProposalNumber();
         
         nextProposalNumber++;
 		
 	    try
             {
-	    	
 	    	//send the prepare message to all the Beatles
 	    	Iterator<Node> iterator = nodeList.iterator();
-	    	Node Beatle = iterator.next();
+	    	Node Beatle;
 	    	while(iterator.hasNext())
 	    	    {
+	    		Beatle=iterator.next();
 	    		node.sendUDPMessage(Beatle, prepareMessage);
 	    		System.out.printf("Prepare message sent to %s\n",Beatle.getNodeName());
-	    		Beatle=iterator.next();
 	    	    }
 	    	
             }
@@ -110,22 +114,22 @@ public class Proposer {
 			proposals[messageReceived.m-firstProposalNumber].accVal = messageReceived.accVal;
 			proposals[messageReceived.m-firstProposalNumber].setStatus("Accepted");
 		    	
-		    sendAccept(nodeList);
+		    sendAccept(messageReceived, nodeList);
 		    	
 		    }
 			
 		}
 	
 	// Send Accept
-	void sendAccept(ArrayList<Node> nodeList){
+	void sendAccept(Message messageReceived, ArrayList<Node> nodeList){
 		
 		// prepare message
         Message acceptMessage = new Message();
         acceptMessage.msg = "Accept";
         acceptMessage.messageType = Constant.messageType.Accept;
         acceptMessage.sender = node.getNodeName();
-        acceptMessage.m = nextProposalNumber;
-        acceptMessage.log = accLog;
+        acceptMessage.m = messageReceived.m;
+        acceptMessage.log = proposals[messageReceived.m-firstProposalNumber].log;
 		
 	    try
             {
@@ -154,14 +158,14 @@ public class Proposer {
 		}
 	
 	// Send Commit
-	void sendCommit(ArrayList<Node> nodeList){
+	void sendCommit(Message messageReceived, ArrayList<Node> nodeList){
 		// prepare message
         Message commitMessage = new Message();
         commitMessage.msg = "Commit";
         commitMessage.messageType = Constant.messageType.Commit;
         commitMessage.sender = node.getNodeName();
-        commitMessage.m = nextProposalNumber;
-        commitMessage.log = accLog;
+        commitMessage.m = messageReceived.m;
+        commitMessage.log = messageReceived.log;
 		
 	    try
             {
@@ -188,6 +192,6 @@ public class Proposer {
 	void ackReceived(Message messageReceived, ArrayList<Node> nodeList){
 		System.out.printf("Ack Message Received from %s: %s\n",messageReceived.sender,messageReceived.msg);
 		
-		sendCommit(nodeList);
+		sendCommit(messageReceived, nodeList);
 	}
 }
