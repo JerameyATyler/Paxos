@@ -72,23 +72,23 @@ public class Acceptor {
 	        promiseMessage.accVal = accVal;
 	        
 	        // send promise response to Proposer
-		    try
-	            {
-		    	
-		    	//send message to the proposer
-		    	Iterator<Node> iterator = nodeList.iterator();
-		    	Node proposer;
-		    	while(iterator.hasNext())
-		    	    {
-		    		proposer = iterator.next();
-		    		if (proposer.getNodeName().equals(messageReceived.sender))
-		    		   {	
-		    		   node.sendUDPMessage(proposer, promiseMessage);
-		    	       System.out.printf("Promise message# %d sent to %s:\n",promiseMessage.m,proposer.getNodeName());
-		    		   }
-		    		   
-		    	    }
-	            }
+	        try
+            {
+	    	//send the promise message to the Proposer
+	    	Iterator<Node> iterator = nodeList.iterator();
+	    	Node Beatle;
+	    	while(iterator.hasNext())
+	    	    {
+	    		Beatle=iterator.next();
+	    		
+	    		if (Beatle.getNodeName().equals(messageReceived.sender))
+	    		   {
+	    		   node.sendUDPMessage(Beatle, promiseMessage);
+	    		   System.out.printf("Promise message# %d sent to %s:\n",promiseMessage.m,Beatle.getNodeName());
+	    		   }
+	    	    }
+	    	
+            }
 	        catch (Exception ex)
 	        {
 	        	ex.printStackTrace();
@@ -130,22 +130,22 @@ public class Acceptor {
          ackMessage.m = messageReceived.m;
          ackMessage.log = messageReceived.log;
  		
- 		try
-             {
- 	    	
- 			//send message to the proposer
+         // send ack message to Proposer
+	        try
+         {
 	    	Iterator<Node> iterator = nodeList.iterator();
-	    	Node proposer;
+	    	Node Beatle;
 	    	while(iterator.hasNext())
 	    	    {
-	    		proposer = iterator.next();
-	    		if (proposer.getNodeName().equals(messageReceived.sender))
-	    		   {	
-	    		   node.sendUDPMessage(proposer, ackMessage);
-	    		   System.out.printf("Ack message# %d sent to %s:\n",ackMessage.m,proposer.getNodeName());
+	    		Beatle=iterator.next();
+	    		
+	    		if (Beatle.getNodeName().equals(messageReceived.sender))
+	    		   {
+	    		   node.sendUDPMessage(Beatle, ackMessage);
+	    		   System.out.printf("Ack message# %d sent to %s:\n",ackMessage.m,Beatle.getNodeName());
 	    		   }
 	    	    }
-             }
+         }
          catch (Exception ex)
          {
          	ex.printStackTrace();
