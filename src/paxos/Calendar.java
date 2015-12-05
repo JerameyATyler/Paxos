@@ -58,6 +58,8 @@ public class Calendar
     //The list of event records that is used to maintain the log
     ArrayList<EventRecord> log = new ArrayList();
 
+    //Store Leader Node (Defaults to John)
+    Node Leader = John;
     
     public static void main(String[] args)
     {
@@ -95,8 +97,7 @@ public class Calendar
         //Save the Node List
         node.setNodeList(nodeList);
         
-        //Store Leader Node (Defaults to John)
-        Node Leader = John;
+        
                 
         //Listen in the background for TCP messages
         Runnable backGroundRunnable = new Runnable(){
@@ -1254,6 +1255,10 @@ public class Calendar
         }
     }
 
+    public void setLeader(Node leader)
+    {
+        this.Leader = leader;
+    }
     //Enum for the the different event types
     private enum eventType
     {

@@ -286,6 +286,7 @@ public class Node
                                         messageReceived.highestId,
                                         messageReceived.receivers);
                                 this.isLeader = messageReceived.highestId.equals(this.getNodeName());
+                                cal.setLeader(this.nodeMap.get(messageReceived.highestId));
                                 System.out.println("Leader is " + messageReceived.highestId);
                                 break;
                             }
