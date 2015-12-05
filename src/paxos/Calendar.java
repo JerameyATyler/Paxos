@@ -58,9 +58,9 @@ public class Calendar
     //The list of event records that is used to maintain the log
     ArrayList<EventRecord> log = new ArrayList();
 
-    //Store Leader Node (Defaults to John)
-    Node Leader = John;
     
+        //Store Leader Node (Defaults to John)
+        Node Leader = John;
     public static void main(String[] args)
     {
         Calendar cal = new Calendar();
@@ -96,9 +96,7 @@ public class Calendar
         
         //Save the Node List
         node.setNodeList(nodeList);
-        
-        
-                
+                        
         //Listen in the background for TCP messages
         Runnable backGroundRunnable = new Runnable(){
         	public void run(){
@@ -212,6 +210,11 @@ public class Calendar
                     break;
                 case 2:
                     this.deleteAppointment();
+                    
+                    //Initiate paxos protocol to delete appointment      	       
+                    System.out.println("Request sent to delete this appointment from the Calendars...\n");
+                    Leader.proposer.sendPrepare(this.dictionary,this.log,nodeList);
+                    
                     break;
                 case 3:
                     this.printAppointment();
@@ -527,7 +530,7 @@ public class Calendar
             m.eventType = 2;
             //this.pruneLog();
             this.reconstructAppointmentList();
-            this.send(m);           
+           // this.send(m);           
         }
     }
 
