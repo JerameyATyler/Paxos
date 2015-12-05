@@ -1258,6 +1258,18 @@ public class Calendar
     public void setLeader(Node leader)
     {
         this.Leader = leader;
+        this.nodeList.stream().
+                forEach((beatle) ->
+        {
+            if(beatle.getNodeName().equals(leader.getNodeName()))
+            {
+                beatle.setLeader(true);
+            }
+            else
+            {
+                beatle.setLeader(false);
+            }
+        });
     }
     //Enum for the the different event types
     private enum eventType
