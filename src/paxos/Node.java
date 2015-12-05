@@ -285,6 +285,8 @@ public class Node
                                 this.leaderElection.receiveCoordinator(
                                         messageReceived.highestId,
                                         messageReceived.receivers);
+                                this.isLeader = messageReceived.highestId.equals(this.getNodeName());
+                                System.out.println("Leader is " + messageReceived.highestId);
                                 break;
                             }
                         }
