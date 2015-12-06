@@ -689,7 +689,6 @@ public class Calendar
             
         }
         attendees[this.userNumber] = true;
-        attendees[userNumber] = true;
         while (cont)
         {
             cont = false;
