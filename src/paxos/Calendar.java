@@ -96,9 +96,6 @@ public class Calendar
         
         //Save the Node List
         node.setNodeList(nodeList);
-  
-        //Store Leader Node (Defaults to John)
-        Node Leader = John;
 
         //Listen in the background for TCP messages
         Runnable backGroundRunnable = new Runnable(){
