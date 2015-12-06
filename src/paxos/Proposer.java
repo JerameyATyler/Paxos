@@ -30,7 +30,7 @@ public class Proposer {
 	
 	   // Proposer numbers need to be unique for all nodes
 	   // Use node name to generate starting number
-	   switch (node.getNodeName()){
+	   /* switch (node.getNodeName()){
 	      case "John":
 	    	  firstProposalNumber = 1 * Constant.MAX_PROPOSALS;
 	    	  break;
@@ -49,22 +49,19 @@ public class Proposer {
 	      default:
 	    	  firstProposalNumber = 6 * Constant.MAX_PROPOSALS;
 	    	  break;
-	      }
-
+	      } */
+		
+		  firstProposalNumber = 1;
 	      nextProposalNumber = firstProposalNumber;
 	   
 	   }
 	   
 	// sends a Prepare message to all acceptors
-	public void sendPrepare(
-			int[][] dictionary,
-			ArrayList<EventRecord> log,
-			ArrayList<Node> nodeList){
+	public void sendPrepare(Message messageReceived,ArrayList<Node> nodeList){
 		
 		// create a new unique proposal number
 		Proposal proposal = new Proposal(nextProposalNumber);
-		proposal.dictionary = dictionary;
-		proposal.log = log;		
+		proposal.log = messageReceived.log;		
 		
 		// store this proposal in a proposal list
 		proposals[nextProposalNumber-firstProposalNumber] = proposal;

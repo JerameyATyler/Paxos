@@ -168,7 +168,14 @@ public class Node
                     switch (messageReceived.messageType)
                     {
 
-                        case Prepare:
+                        case Initiate: 
+                        {
+                    	   //System.out.println("Initiate);
+                    	   proposer.sendPrepare(messageReceived, nodeList);
+                    	   break;
+                        }
+                    
+                    	case Prepare:
                         {
                             //System.out.println("Prepare");
                             acceptor.prepareReceived(messageReceived, nodeList);

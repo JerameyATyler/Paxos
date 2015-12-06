@@ -198,9 +198,22 @@ public class Calendar
                        
                         //Initiate paxos protocol to add appointment      	       
                         System.out.println("Request sent to add this appointment to the Calendars...\n");
-                        Leader.proposer.sendPrepare(this.dictionary,this.log,nodeList);
                         
-                        //this.send(m);
+                        // Initiate message
+                        Message initiateMessage = new Message();
+                        initiateMessage.msg = "Initiate";
+                        initiateMessage.messageType = Constant.messageType.Initiate;
+                        initiateMessage.sender = node.getNodeName();
+                        initiateMessage.log = this.log;
+                		
+                	    try
+                            {
+                	    	node.sendUDPMessage(Leader, initiateMessage);
+                	    	}
+                        catch (Exception ex)
+                            {
+                            ex.printStackTrace();
+                            } 
                     }
                     else
                     {
@@ -213,7 +226,22 @@ public class Calendar
                     
                     //Initiate paxos protocol to delete appointment      	       
                     System.out.println("Request sent to delete this appointment from the Calendars...\n");
-                    Leader.proposer.sendPrepare(this.dictionary,this.log,nodeList);
+                    
+                    // Initiate message
+                    Message initiateMessage = new Message();
+                    initiateMessage.msg = "Initiate";
+                    initiateMessage.messageType = Constant.messageType.Initiate;
+                    initiateMessage.sender = node.getNodeName();
+                    initiateMessage.log = this.log;
+            		
+            	    try
+                        {
+            	    	node.sendUDPMessage(Leader, initiateMessage);
+            	    	}
+                    catch (Exception ex)
+                        {
+                        ex.printStackTrace();
+                        } 
                     
                     break;
                 case 3:
