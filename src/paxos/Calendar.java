@@ -160,6 +160,8 @@ public class Calendar
         {
         	findLeader();
         	
+ 		    System.out.printf("Node %s is the Leader\n\n",Leader.getNodeName());
+        	
             String in = "";
             //Prompt user for input
             while (cont)
@@ -1314,7 +1316,7 @@ public class Calendar
     	    {
     		if (Beatle.isLeader())
     		   {	
-    		   System.out.printf("Node %s is the Leader\n\n",Beatle.getNodeName());
+    		   //System.out.printf("Node %s is the Leader\n\n",Beatle.getNodeName());
                Leader = Beatle;
     		   }
     		   
