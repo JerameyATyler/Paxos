@@ -40,7 +40,7 @@ interface Constant {
     public enum messageType
     {
 
-        Initiate, Prepare, Promise, Accept, Ack, Commit, Heartbeat, HeartbeatAck, Coordinator, Election
+        Initiate, Prepare, Promise, Accept, Ack, Commit, Recover, Refresh, Heartbeat, HeartbeatAck, Coordinator, Election
     }
 	    
 }

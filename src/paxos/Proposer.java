@@ -152,6 +152,25 @@ public class Proposer {
 			
 		}
 	
+	// Recover message received
+	void recoverReceived(Message messageReceived, ArrayList<Node> nodeList){
+			
+		//System.out.printf("Recover Message# %d Received from %s: %s\n",messageReceived.m,messageReceived.sender,messageReceived.msg);
+			    
+		//send a copy of the log to the recovering node
+		Iterator<Node> iterator = nodeList.iterator();
+	    Node Beatle;
+	    while(iterator.hasNext())
+	    	 {
+	    	 Beatle=iterator.next();
+	    		
+	    	 if (Beatle.getNodeName().equals(messageReceived.sender))
+	    		{
+	    		   sendRefresh(messageReceived,Beatle);
+	    		}
+	    	 }
+		}
+	
 	// Send Accept
 	void sendAccept(Message messageReceived, ArrayList<Node> nodeList){
 		
@@ -183,6 +202,30 @@ public class Proposer {
         }
 		// send accept message to all acceptors
 	}
+	
+	// Send Accept
+		void sendRefresh(Message messageReceived, Node Beatle){
+			
+			// prepare message
+	        Message refreshMessage = new Message();
+	        refreshMessage.msg = "Refresh";
+	        refreshMessage.messageType = Constant.messageType.Refresh;
+	        refreshMessage.sender = node.getNodeName();
+	        refreshMessage.log = messageReceived.log;
+			
+		    try
+	            {
+		    	node.sendUDPMessage(Beatle, refreshMessage);
+		    	//System.out.printf("Accept message# %d sent to %s\n",messageReceived.m,Beatle.getNodeName());		    	
+	            }
+	        catch (Exception ex)
+	        {
+	        	ex.printStackTrace();
+	        }
+			// send accept message to all acceptors
+		}
+	
+	
 	
 	// Chooses an accepted value
 		void choose(){

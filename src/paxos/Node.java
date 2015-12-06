@@ -213,6 +213,24 @@ public class Node
                             System.out.println("Calendar Log Updated by Commit\n");
                             break;
                         }
+                        
+                        case Recover:
+                        {
+                            //System.out.println("Recover");
+                        	//Get Leader's Current Log to send back to Recovering Node
+                        	messageReceived.log = cal.log;
+                            proposer.recoverReceived(messageReceived, nodeList);
+                            break;
+                        }
+                        
+                        case Refresh:
+                        {
+                            //System.out.println("Refresh");
+                            cal.log = messageReceived.log;
+                        	cal.writeLog();
+                        	cal.reconstructAppointmentList();
+                            break;
+                        }
 
                     } // end switch paxos message handler
 
