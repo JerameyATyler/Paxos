@@ -46,7 +46,7 @@ public class Calendar
             = (ArrayList<Appointment>[]) new ArrayList[Constant.NUMBER_OF_NODES];
 
     //The index of appointments that corresponds to this user
-    private final int userNumber = 0;
+    private int userNumber = 0;
 
     //The current event number
     private int eventNumber = 0;
@@ -659,6 +659,36 @@ public class Calendar
                 + "commas:\n1)John\n2)Paul\n3)George\n4)Ringo\n5)Walrus";
         boolean cont = true;
         boolean[] attendees = new boolean[Constant.NUMBER_OF_NODES];
+        switch(this.node.getNodeName())
+        {
+            case "John":
+            {
+                this.userNumber = 0;
+                break;
+            }
+            case "Paul":
+            {
+                this.userNumber = 1;
+                break;
+            }
+            case "George":
+            {
+                this.userNumber = 2;
+                break;
+            }
+            case "Ringo":
+            {
+                this.userNumber = 3;
+                break;
+            }
+            case "Walrus":
+            {
+                this.userNumber = 4;
+                break;
+            }
+            
+        }
+        attendees[this.userNumber] = true;
         attendees[userNumber] = true;
         while (cont)
         {
