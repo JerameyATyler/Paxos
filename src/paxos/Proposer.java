@@ -55,6 +55,14 @@ public class Proposer {
 	      nextProposalNumber = firstProposalNumber;
 	   
 	   }
+	
+	public int getNextProposalNumber() {
+		return nextProposalNumber;
+	}
+
+	public void setNextProposalNumber(int proposalNumber) {
+		this.nextProposalNumber = proposalNumber;
+	}
 	   
 	// sends a Prepare message to all acceptors
 	public void sendPrepare(Message messageReceived,ArrayList<Node> nodeList){

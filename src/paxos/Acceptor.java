@@ -62,6 +62,10 @@ public class Acceptor {
 	        {
 	    	maxPrepare = messageReceived.m;
 	    	
+	    	//if this node becomes leader set nextProposalNumber to m+1
+	    	if (node.proposer.getNextProposalNumber() <= maxPrepare)
+	    		node.proposer.setNextProposalNumber(maxPrepare+1);
+	    	
 	    	// prepare reply
 	        Message promiseMessage = new Message();
 	        promiseMessage.msg = "Promise";
