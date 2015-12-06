@@ -66,11 +66,6 @@ public class Calendar
         Calendar cal = new Calendar();
         //cal.test();
         
-        //Check if log exists. If so recreate it
-        if(new File("log.txt").isFile())
-        {
-            cal.reconstructLog();
-        }
         cal.runCalendar();
     }
 
@@ -81,9 +76,18 @@ public class Calendar
     {
     	
         //Initialize the appointments lists
-        for (int i = 0; i < this.appointments.length; i++)
+        
+        //Check if log exists. If so recreate it
+        if(new File("log.txt").isFile())
         {
-            this.appointments[i] = new ArrayList();
+            this.reconstructLog();
+        }
+        else
+        {
+            for (int i = 0; i < this.appointments.length; i++)
+            {
+                this.appointments[i] = new ArrayList();
+            }
         }
         
         //Initialize the node list
