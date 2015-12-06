@@ -133,25 +133,32 @@ public class Calendar
         Thread messageUDPListener = new Thread(backGroundUDPRunnable);
         messageUDPListener.start();
         
+        findLeader();
+        
+        //Send the Leader a recover message to obtain latest version of the log
+        Message recoverMessage = new Message();
+        recoverMessage.msg = "Recover";
+        recoverMessage.messageType = Constant.messageType.Recover;
+        recoverMessage.sender = node.getNodeName();
+          
+	    try
+            {
+	    	//send the commit message to the Leader
+	    	node.sendUDPMessage(Leader, recoverMessage);
+	    	//System.out.printf("Recover message# sent to %s\n",Leader.getNodeName());
+            }
+        
+	    catch (Exception ex)
+        {
+        	ex.printStackTrace();
+        }
+        
         boolean cont = true;
         
         // Display Calendar User Interface
         while (cont)
         {
-        	 //Find the Leader
-	    	Iterator<Node> iterator = nodeList.iterator();
-	    	Node Beatle = iterator.next();
-	    	
-	    	while(iterator.hasNext())
-	    	    {
-	    		if (Beatle.isLeader())
-	    		   {	
-	    		   System.out.printf("Node %s is the Leader\n\n",Beatle.getNodeName());
-                   Leader = Beatle;
-	    		   }
-	    		   
-	    		Beatle=iterator.next();
-	    	    }
+        	findLeader();
         	
             String in = "";
             //Prompt user for input
@@ -1295,6 +1302,24 @@ public class Calendar
                 }
             }
         }
+    }
+    
+    public void findLeader()
+    {
+    	//Find the Leader
+    	Iterator<Node> iterator = nodeList.iterator();
+    	Node Beatle = iterator.next();
+    	
+    	while(iterator.hasNext())
+    	    {
+    		if (Beatle.isLeader())
+    		   {	
+    		   System.out.printf("Node %s is the Leader\n\n",Beatle.getNodeName());
+               Leader = Beatle;
+    		   }
+    		   
+    		Beatle=iterator.next();
+    	    }
     }
 
     public void setLeader(Node leader)
