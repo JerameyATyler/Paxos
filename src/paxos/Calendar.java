@@ -21,9 +21,9 @@ import java.util.Scanner;
 public class Calendar
 {
     // Only uncomment ONE of these entries based on this AWS instance
-    Node node = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, true, true);
+    //Node node = new Node(Constant.NODE_JOHN,Constant.JOHN_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER, true, true);
     //Node node = new Node(Constant.NODE_PAUL,Constant.PAUL_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false, true);
-    //Node node = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false, true);
+    Node node = new Node(Constant.NODE_GEORGE,Constant.GEORGE_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false, true);
     //Node node = new Node(Constant.NODE_RINGO,Constant.RINGO_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false, true);
     //Node node = new Node(Constant.NODE_WALRUS,Constant.WALRUS_IP,Constant.TCP_PORT_NUMBER, Constant.UDP_PORT_NUMBER,false, true);
 	
@@ -755,11 +755,12 @@ public class Calendar
                 };
                 for (int i = 0; i < appt.attendees.length; i++)
                 {
-                    if (appt.attendees[i] && i != userNumber)
+                    if (appt.attendees[i] && !attendeesStr[i].equals(this.node.getNodeName()))
                     {
                         attendees += attendeesStr[i] + " ";
                     }
-                    else if (appt.attendees[i] && i == userNumber)
+                    else if (appt.attendees[i] 
+                            && attendeesStr[i].equals(this.node.getNodeName()))
                     {
                         attendees += "you ";
                     }
