@@ -50,7 +50,7 @@ public class Node
         this.primaryNode = primaryNode;
 
         proposer.initializeProposalNumber();
-        
+        acceptor.initializeAcc();
     }
 
     // Store a list of all other nodes

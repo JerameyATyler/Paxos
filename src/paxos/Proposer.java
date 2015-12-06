@@ -7,6 +7,12 @@
 
 package paxos;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -50,10 +56,29 @@ public class Proposer {
 	    	  firstProposalNumber = 6 * Constant.MAX_PROPOSALS;
 	    	  break;
 	      } */
-		
+	    if (new File("proposal.txt").isFile())
+            {
+                File file = new File("proposal.txt");
+                try (BufferedReader br
+                        = new BufferedReader(new FileReader(file)))
+                {
+                    String line;
+                    while ((line = br.readLine()) != null)
+                    {
+                        nextProposalNumber = Integer.parseInt(line) + 1;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            else
+            {
 		  firstProposalNumber = 1;
 	      nextProposalNumber = firstProposalNumber;
-	   
+            }
+            
 	   }
 	
 	public int getNextProposalNumber() {
@@ -84,6 +109,7 @@ public class Proposer {
         prepareMessage.m = proposal.getProposalNumber();
         
         nextProposalNumber++;
+        this.writeProposal();
 		
 	    try
             {
@@ -212,4 +238,17 @@ public class Proposer {
 		    	
 		    }
 	}
+
+    private void writeProposal()
+    {
+        try (PrintWriter writer = new PrintWriter("proposal.txt", "UTF-8"))
+        {
+            writer.println(this.nextProposalNumber);
+            writer.close();
+        }
+        catch (FileNotFoundException | UnsupportedEncodingException ex)
+        {
+            System.out.println("lol");
+        }
+    }
 }

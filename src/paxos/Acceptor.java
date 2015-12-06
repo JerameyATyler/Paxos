@@ -7,6 +7,12 @@
 
 package paxos;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -32,6 +38,7 @@ public class Acceptor {
 	// Set largest proposal number for which it has responded to a prepare message
 	public void setMaxPrepare(int maxPrepare) {
 		this.maxPrepare = maxPrepare;
+                this.writeMaxPrepare();
 	}
 	
 	// Get largest proposal which has been accepted
@@ -42,6 +49,7 @@ public class Acceptor {
 	// Set largest proposal which has been accepted
 	public void setAccNum(int accNum) {
 		this.accNum = accNum;
+                this.writeAcc();
 	}
 	
 	// Get value of proposal numbered accNum (initially null) 
@@ -61,7 +69,8 @@ public class Acceptor {
 	    if (messageReceived.m > maxPrepare)
 	        {
 	    	maxPrepare = messageReceived.m;
-	    	
+	    	this.writeMaxPrepare();
+                
 	    	//if this node becomes leader set nextProposalNumber to m+1
 	    	if (node.proposer.getNextProposalNumber() <= maxPrepare)
 	    		node.proposer.setNextProposalNumber(maxPrepare+1);
@@ -107,6 +116,7 @@ public class Acceptor {
 		 if (messageReceived.m >= maxPrepare)
 		    {  
 		    accNum = messageReceived.m;
+                    this.writeAcc();
 		    accVal = messageReceived.v;
 		    accLog = messageReceived.log;
 			
@@ -156,5 +166,68 @@ public class Acceptor {
          }
  		
  	}
+
+    public void initializeAcc()
+    {
+        if (new File("Acc.txt").isFile())
+        {
+            File file = new File("Acc.txt");
+            try (BufferedReader br
+                    = new BufferedReader(new FileReader(file)))
+            {
+                String line;
+                while ((line = br.readLine()) != null)
+                {
+                    accNum = Integer.parseInt(line);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        if (new File("Max.txt").isFile())
+        {
+            File file = new File("Max.txt");
+            try (BufferedReader br
+                    = new BufferedReader(new FileReader(file)))
+            {
+                String line;
+                while ((line = br.readLine()) != null)
+                {
+                    maxPrepare = Integer.parseInt(line);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+    }
+
+    private void writeMaxPrepare()
+    {
+        try (PrintWriter writer = new PrintWriter("Max.txt", "UTF-8"))
+        {
+            writer.println(this.maxPrepare);
+            writer.close();
+        }
+        catch (FileNotFoundException | UnsupportedEncodingException ex)
+        {
+            System.out.println("lol");
+        }
+    }
     
+    private void writeAcc()
+    {
+        try (PrintWriter writer = new PrintWriter("Acc.txt", "UTF-8"))
+        {
+            writer.println(this.accNum);
+            writer.close();
+        }
+        catch (FileNotFoundException | UnsupportedEncodingException ex)
+        {
+            System.out.println("lol");
+        }
+    }
 }

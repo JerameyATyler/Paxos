@@ -7,6 +7,10 @@
 
 package paxos;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 public class Proposal {
@@ -32,6 +36,15 @@ public class Proposal {
 
 	public void setProposalNumber(int proposalNumber) {
 		this.proposalNumber = proposalNumber;
+                try (PrintWriter writer = new PrintWriter("proposal.txt", "UTF-8"))
+                {
+                    writer.println(this.proposalNumber);
+                    writer.close();
+                }
+                catch (FileNotFoundException | UnsupportedEncodingException ex)
+                {
+                    System.out.println("lol");
+                }
 	}
 
 	public int getNumberAccepts() {
