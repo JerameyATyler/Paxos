@@ -153,9 +153,12 @@ public class Node
                     int length = 0;
                     for (int i = 0; i < 4; ++i)
                     {
-                        length |= (data[3 - i] & 0xff) << (i << 3);
+                       length |= (data[3 - i] & 0xff) << (i << 3);
                     }
 
+                    if (length >= 0)
+                       {
+                    
                     // Read in the message
                     byte[] buffer = new byte[length];
                     packet = new DatagramPacket(buffer, buffer.length);
@@ -231,7 +234,7 @@ public class Node
                         	cal.reconstructAppointmentList();
                             break;
                         }
-
+                      }
                     } // end switch paxos message handler
 
                     // Used for debug purposes
