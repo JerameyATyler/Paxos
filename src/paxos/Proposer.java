@@ -105,7 +105,8 @@ public class Proposer {
 		proposals[messageReceived.m-firstProposalNumber].addAcceptance();
 			
 		// If message received by majority
-		if (proposals[messageReceived.m-firstProposalNumber].getNumberAccepts()>Constant.NUMBER_OF_NODES / 5)
+		if ((proposals[messageReceived.m-firstProposalNumber].getNumberAccepts() > Constant.NUMBER_OF_NODES / 2) &&
+			     proposals[messageReceived.m-firstProposalNumber].getStatus().equals("Active"))
 		    {
 			proposals[messageReceived.m-firstProposalNumber].accNum = messageReceived.accNum;
 			proposals[messageReceived.m-firstProposalNumber].accVal = messageReceived.accVal;
@@ -163,7 +164,7 @@ public class Proposer {
         commitMessage.sender = node.getNodeName();
         commitMessage.m = messageReceived.m;
         commitMessage.log = messageReceived.log;
-		
+        
 	    try
             {
 	    	//send the commit message to all the Beatles
@@ -189,6 +190,18 @@ public class Proposer {
 	void ackReceived(Message messageReceived, ArrayList<Node> nodeList){
 		System.out.printf("Ack Message# %d Received from %s: %s\n",messageReceived.m,messageReceived.sender,messageReceived.msg);
 		
-		sendCommit(messageReceived, nodeList);
+		proposals[messageReceived.m-firstProposalNumber].addAck();
+		
+		// If message received by majority
+		if ((proposals[messageReceived.m-firstProposalNumber].getNumberAck() >Constant.NUMBER_OF_NODES / 2) &&
+		     proposals[messageReceived.m-firstProposalNumber].getStatus().equals("Accepted"))
+		    {
+			proposals[messageReceived.m-firstProposalNumber].accNum = messageReceived.accNum;
+			proposals[messageReceived.m-firstProposalNumber].accVal = messageReceived.accVal;
+			proposals[messageReceived.m-firstProposalNumber].setStatus("Commit");
+		    	
+		    sendCommit(messageReceived, nodeList);
+		    	
+		    }
 	}
 }

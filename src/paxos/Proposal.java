@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class Proposal {
 	private int proposalNumber;
 	private int numberAccepts = 0;
+	private int numberAck = 0;
 	private String status = "Active";
 	
 	// initially unset
@@ -51,5 +52,17 @@ public class Proposal {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public int getNumberAck() {
+		return numberAck;
+	}
+
+	public void setNumberAcks(int numberAck) {
+		this.numberAck = numberAck;
+	}
+	
+	public void addAck(){
+		numberAck++;
 	}
 }
