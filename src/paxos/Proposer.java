@@ -142,12 +142,12 @@ public class Proposer {
 	    	
 	    	//send the Accept message to all the Beatles
 	    	Iterator<Node> iterator = nodeList.iterator();
-	    	Node Beatle = iterator.next();
+	    	Node Beatle;
 	    	while(iterator.hasNext())
 	    	    {
+	    		Beatle=iterator.next();
 	    		node.sendUDPMessage(Beatle, acceptMessage);
 	    		System.out.printf("Accept message# %d sent to %s\n",messageReceived.m,Beatle.getNodeName());
-	    		Beatle=iterator.next();
 	    	    }
 	    	
             }
@@ -172,17 +172,17 @@ public class Proposer {
         commitMessage.sender = node.getNodeName();
         commitMessage.m = messageReceived.m;
         commitMessage.log = messageReceived.log;
-        
+          
 	    try
             {
 	    	//send the commit message to all the Beatles
 	    	Iterator<Node> iterator = nodeList.iterator();
-	    	Node Beatle = iterator.next();
+	    	Node Beatle ;
 	    	while(iterator.hasNext())
 	    	    {
+	    		Beatle=iterator.next();
 	    		node.sendUDPMessage(Beatle, commitMessage);
 	    		System.out.printf("Commit message# %d sent to %s\n",messageReceived.m,Beatle.getNodeName());
-	    		Beatle=iterator.next();
 	    	    }
 	    	
             }
