@@ -65,6 +65,12 @@ public class Calendar
     {
         Calendar cal = new Calendar();
         //cal.test();
+        
+        //Check if log exists. If so recreate it
+        if(new File("log.txt").isFile())
+        {
+            cal.reconstructLog();
+        }
         cal.runCalendar();
     }
 
